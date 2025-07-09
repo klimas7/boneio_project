@@ -24,15 +24,19 @@ ethernet:
   power_pin: GPIO16
 
 udp:
-  update_interval: 5s
-  encryption: 'BKL_BONEIO1_KEY' #set it to yours shared secret key
-  rolling_code_enable: true
-  binary_sensors:
-    - in_03
-    - in_04
-  providers:
-    - name: boneio-dr-8ch-03-30f8d8
-      encryption: 'BKL_BONEIO2_KEY' #set it to yours shared secret key
+
+packet_transport:
+  - id: transport
+    platform: udp
+    update_interval: 5s
+    encryption: 'BKL_BONEIO1_KEY' #set it to yours shared secret key
+    rolling_code_enable: true
+    binary_sensors:
+      - in_03
+      - in_04
+    providers:
+      - name: boneio-dr-8ch-03-30f8d8
+        encryption: 'BKL_BONEIO2_KEY' #set it to yours shared secret key
 
 dashboard_import:
   package_import_url: github://boneIO-eu/esphome/boneio-32x10_lights_v0_7.yaml@latest
