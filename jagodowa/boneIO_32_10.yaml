@@ -755,6 +755,12 @@ sensor:
         name: "SDM230M Voltage"
       active_power:
         name: "SDM230M Power"
+    frequency:
+      name: "SDM230M Frequency"
+    total_power:
+      name: "SDM230M Total Power"
+    import_active_energy:
+      name: "SDM230M Import Active Energy"
 
 # modbus:
 #   send_wait_time: 200ms
