@@ -32,8 +32,8 @@ packet_transport:
     encryption: 'BKL_BONEIO1_KEY' #set it to yours shared secret key
     rolling_code_enable: true
     binary_sensors:
-      - in_03
-      - in_04
+      - in_s1_c
+      - in_s1_d
     providers:
       - name: boneio-dr-8ch-03-30f8d8
         encryption: 'BKL_BONEIO2_KEY' #set it to yours shared secret key
@@ -242,8 +242,8 @@ light:
 
 binary_sensor:
   - platform: gpio
-    name: IN_01
-    id: in_01
+    name: S1_A
+    id: in_s1_a
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
@@ -272,8 +272,8 @@ binary_sensor:
         invalid_cooldown: 0.5s
 
   - platform: gpio
-    name: IN_02
-    id: in_02
+    name: S1_B
+    id: in_s1_b
     pin:
       pcf8574: pcf_inputs_1to14
       number: 1
@@ -302,8 +302,8 @@ binary_sensor:
         invalid_cooldown: 0.5s
 
   - platform: gpio
-    name: IN_03
-    id: in_03
+    name: S1_C
+    id: in_s1_c
     pin:
       pcf8574: pcf_inputs_1to14
       number: 2
@@ -315,8 +315,8 @@ binary_sensor:
     #   - light.toggle: light_03
 
   - platform: gpio
-    name: IN_04
-    id: in_04
+    name: S1_D
+    id: in_s1_d
     pin:
       pcf8574: pcf_inputs_1to14
       number: 3
@@ -328,8 +328,8 @@ binary_sensor:
     #   - light.toggle: light_04
 
   - platform: gpio
-    name: IN_05
-    id: in_05
+    name: S2_A
+    id: in_s2_a
     pin:
       pcf8574: pcf_inputs_1to14
       number: 4
@@ -341,8 +341,8 @@ binary_sensor:
         - light.toggle: light_05
 
   - platform: gpio
-    name: IN_06
-    id: in_06
+    name: S2_B
+    id: in_s2_b
     pin:
       pcf8574: pcf_inputs_1to14
       number: 5
@@ -354,8 +354,8 @@ binary_sensor:
         - light.toggle: light_06
 
   - platform: gpio
-    name: IN_07
-    id: in_07
+    name: S2_C
+    id: in_s2_c
     pin:
       pcf8574: pcf_inputs_1to14
       number: 6
@@ -367,8 +367,8 @@ binary_sensor:
         - light.toggle: light_07
 
   - platform: gpio
-    name: IN_08
-    id: in_08
+    name: S2_D
+    id: in_s2_d
     pin:
       pcf8574: pcf_inputs_1to14
       number: 8
@@ -380,8 +380,8 @@ binary_sensor:
         - light.toggle: light_08
 
   - platform: gpio
-    name: IN_09
-    id: in_09
+    name: S3_A
+    id: in_s3_a
     pin:
       pcf8574: pcf_inputs_1to14
       number: 9
@@ -393,8 +393,8 @@ binary_sensor:
         - light.toggle: light_09
 
   - platform: gpio
-    name: IN_10
-    id: in_10
+    name: S3_B
+    id: in_s3_b
     pin:
       pcf8574: pcf_inputs_1to14
       number: 10
@@ -406,8 +406,8 @@ binary_sensor:
         - light.toggle: light_10
 
   - platform: gpio
-    name: IN_11
-    id: in_11
+    name: S3_C
+    id: in_s3_c
     pin:
       pcf8574: pcf_inputs_1to14
       number: 11
@@ -419,8 +419,8 @@ binary_sensor:
         - light.toggle: light_11
 
   - platform: gpio
-    name: IN_12
-    id: in_12
+    name: S3_D
+    id: in_s3_d
     pin:
       pcf8574: pcf_inputs_1to14
       number: 12

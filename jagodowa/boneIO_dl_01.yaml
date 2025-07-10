@@ -132,8 +132,8 @@ binary_sensor:
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-73be28
-    id: remote_in_03
-    remote_id: in_03
+    id: remote_in_s1_c
+    remote_id: in_s1_c
     on_multi_click:
       - timing:
           - ON for at most 0.4s
