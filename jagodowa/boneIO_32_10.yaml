@@ -34,6 +34,9 @@ packet_transport:
     binary_sensors:
       - in_s1_c
       - in_s1_d
+      - in_s2_a
+      - in_s2_b
+      - in_s3_a
     providers:
       - name: boneio-dr-8ch-03-30f8d8
         encryption: 'BKL_BONEIO2_KEY' #set it to yours shared secret key
@@ -76,6 +79,62 @@ globals:
     type: int[3]
 
 script:
+  - id: bedroom
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("bedroom", "%s %s", sn.c_str(), pt.c_str());
+          //----  O08 - toggle  ----
+          if ((sn == "S05B" || sn == "S06B" || sn == "S07D") && pt == "SP") {
+            id(light_01).toggle().perform();
+          }
+          
+          //----  S05B  ----
+          if (sn == "S05B" && pt == "LP") { 
+              id(light_01).turn_off().perform();
+              id(light_02).turn_off().perform();
+              id(light_03).turn_off().perform();
+          }
+          
+          //----  S06A - S06B  ----
+          
+          if (sn == "S06A" && pt == "SP") {
+            id(light_02).toggle().perform();
+          }
+          
+          if ((sn == "S06A" || sn == "S06B") && pt == "LP") {
+            auto isOn8 = id(light_01).current_values.is_on();
+            auto isOn6 = id(light_02).current_values.is_on();
+          
+            if (isOn6 || isOn8) {
+              id(light_01).turn_off().perform();
+              id(light_02).turn_off().perform();
+            } else {
+              id(light_03).turn_off().perform();
+            }  
+          }
+          
+          //----  S07C - S07D  ----
+          
+          if (sn == "S07C" && pt == "SP") {
+            id(light_03).toggle().perform();
+          }
+                    
+          if ((sn == "S07C" || sn == "S07D") && pt == "LP") {
+            auto isOn8 = id(light_01).current_values.is_on();
+            auto isOn7 = id(light_03).current_values.is_on();
+            
+            if (isOn7 || isOn8) {
+              id(light_01).turn_off().perform();
+              id(light_03).turn_off().perform();
+            } else {
+              id(light_02).turn_off().perform();
+            }
+          }
+          
+
   - id: changeLightsState
     parameters:
       index: int
@@ -255,20 +314,20 @@ binary_sensor:
           - ON for at most 0.4s
           - OFF for at least 0.1s
         then:
+          - logger.log: "S1_A SP -> S06A Sypialnia/lozko/prawa/gora"
           - script.execute:
-              id: changeLightsState
-              index: 0
-              lightA: !lambda 'return id(light_01);'
-              lightB: !lambda 'return id(light_02);'
+              id: bedroom
+              sn: "S06A"
+              pt: "SP"
         invalid_cooldown: 0.5s
       - timing:
           - ON for at least 0.7s
         then:
+          - logger.log: "S1_A LP -> S06A Sypialnia/lozko/prawa/gora"
           - script.execute:
-              id: offLights
-              index: 0
-              lightA: !lambda 'return id(light_01);'
-              lightB: !lambda 'return id(light_02);'
+              id: bedroom
+              sn: "S06A"
+              pt: "LP"
         invalid_cooldown: 0.5s
 
   - platform: gpio
@@ -285,20 +344,20 @@ binary_sensor:
           - ON for at most 0.4s
           - OFF for at least 0.1s
         then:
+          - logger.log: "S1_B SP -> S06A Sypialnia/lozko/prawa/dol"
           - script.execute:
-              id: changeLightsState
-              index: 1
-              lightA: !lambda 'return id(light_03);'
-              lightB: !lambda 'return id(light_04);'
+              id: bedroom
+              sn: "S06B"
+              pt: "SP"
         invalid_cooldown: 0.5s
       - timing:
           - ON for at least 0.7s
         then:
+          - logger.log: "S1_B LP -> S06A Sypialnia/lozko/prawa/dol"
           - script.execute:
-              id: offLights
-              index: 1
-              lightA: !lambda 'return id(light_03);'
-              lightB: !lambda 'return id(light_04);'
+              id: bedroom
+              sn: "S06B"
+              pt: "LP"
         invalid_cooldown: 0.5s
 
   - platform: gpio
@@ -336,9 +395,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_05
+#    on_press:
+#      then:
+#        - light.toggle: light_05
 
   - platform: gpio
     name: S2_B
@@ -349,9 +408,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_06
+#    on_press:
+#      then:
+#        - light.toggle: light_06
 
   - platform: gpio
     name: S2_C
@@ -362,9 +421,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_07
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - logger.log: "S2_C SP -> S07C Sypialnia/lozko/lewa/gora"
+          - script.execute:
+              id: bedroom
+              sn: "S07C"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - logger.log: "S2_C LP -> S07C Sypialnia/lozko/lewa/gora"
+          - script.execute:
+              id: bedroom
+              sn: "S07C"
+              pt: "LP"
+        invalid_cooldown: 0.5s
 
   - platform: gpio
     name: S2_D
@@ -375,9 +451,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_08
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - logger.log: "S2_D SP -> S07D Sypialnia/lozko/lewa/dol"
+          - script.execute:
+              id: bedroom
+              sn: "S07D"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - logger.log: "S2_D LP -> S07D Sypialnia/lozko/lewa/dol"
+          - script.execute:
+              id: bedroom
+              sn: "S07D"
+              pt: "LP"
+        invalid_cooldown: 0.5s
 
   - platform: gpio
     name: S3_A
@@ -388,9 +481,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_09
+#    on_press:
+#      then:
+#        - light.toggle: light_09
 
   - platform: gpio
     name: S3_B
@@ -401,9 +494,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_10
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - logger.log: "S3_B SP -> S05B Sypialnia/wejscie/lewa"
+          - script.execute:
+              id: bedroom
+              sn: "S05B"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - logger.log: "S3_B LP -> S05B Sypialnia/wejscie/lewa"
+          - script.execute:
+              id: bedroom
+              sn: "S05B"
+              pt: "LP"
+        invalid_cooldown: 0.5s
 
   - platform: gpio
     name: S3_C

@@ -1,0 +1,55 @@
+Pomieszczenie: Sypialnia
+Mamy następujące oświetlenie:
+Ledowe o oznaczeniu
+ - L03 (led TV),
+ - L04 (Led łóżko)
+Żarówki standardowe o oznaczeniu
+ - O06 (prawa strona łóżka),
+ - O07 (lewa strona łóżka),
+ - O08 (główne)
+
+Sterowanie odbywa się poprzez przyciski monostabilne
+- Podwójny przycisk monostabilny S05 przy wejściu
+  Oznaczenie poszczególnych przycisków
+    A - po prawej stronie -> S05A
+    B - po lewej stronie  -> S05B
+- Poczwórny przycisk monostabilny S06 po prawej stronie łóżka
+  Oznaczenie poszczególnych przycisków
+    A - prawy gorny róg -> S06A
+    B - prawy dolny róg -> S06B
+    C - Lewy gorny róg  -> S06C
+    D - Lewy dolny róg  -> S06D
+- Poczwórny przycisk monostabilny S07 po lewej stronie łóżka
+    A - prawy gorny róg -> S07A
+    B - prawy dolny róg -> S07B
+    C - Lewy gorny róg  -> S07C
+    D - Lewy dolny róg  -> S07D
+
+Każdy z przycisków może wyzwolić akcje po krótkim naciśnięciu SP (short push) oraz po długim naciśnięciu LP (long push)
+
+Jeżeli S05B zostanie nacisniety krótko (SP) To zmieni się stan O08 (on->off lub off->on)    D
+Jeżeli S05B zostanie naciśniety długo (LP) To 006, O07 i O08 zostaną wyłączone (off)        D
+
+Jeżeli S05A zostanie nacisniety krótko (SP) To zmieni się stan L03 (on->off lub off->on)    D
+Jeżeli S05A zostanie naciśniety długo (LP) To L03 i L04 zostaną wyłączone (off)             D
+
+
+Jeżeli S06A zostanie nacisniety krótko (SP) to zmieni się stan O06 (on->off lub off->on)    D
+Jeżeli S06B zostanie naciśniety krótko (SP) to zmieni się stan O08 (on->off lub off->on)    D
+Jeżeli S06C zostanie nacisniety krótko (SP) to zmieni się stan L04 (on->off lub off->on)    D
+Jeżeli S06D zostanie nacisniety krótko (SP) to zmieni się stan L03 (on->off lub off->on)    D
+
+Jeżeli S06A lub S06B zostanie nacisnięty długo (LP) to O06 i O08 zostaną wyłączone (off)    D
+Jeżeli S06C lub S06D zostanie nacisnięty długo (LP) to L03 i L04 zostaną wyłączone (off)
+Jeżeli S06A lub S06B zostanie nacisnięty długo (LP) i dodatkowo O06 i O08 są już wyłączone to zostanie wyłączone O07   D
+
+
+Jeżeli S07C zostanie nacisniety krótko (SP) to zmieni się stan O07 (on->off lub off->on)    D
+Jeżeli S07D zostanie naciśniety krótko (SP) to zmieni się stan O08 (on->off lub off->on)    D
+Jeżeli S07C lub S07D zostanie nacisnięty długo (LP) to O07 i O08 zostaną wyłączone (off)    D
+Jeżeli S07C lub S07D zostanie nacisnięty długo (LP) i dodatkowo O07 i O08 są już wyłączone to zostanie wyłączone O06   D
+
+Jeżeli S07A zostanie nacisniety krótko (SP) to zmieni się stan L04 (on->off lub off->on)
+Jeżeli S07B zostanie nacisniety krótko (SP) to zmieni się stan L03 (on->off lub off->on)
+Jeżeli S07A lub S07B zostanie nacisnięty długo (LP) to L03 i L04 zostaną wyłączone (off)
+

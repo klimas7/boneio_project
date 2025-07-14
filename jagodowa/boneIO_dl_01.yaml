@@ -94,6 +94,27 @@ globals:
     type: int[3]
 
 script:
+  - id: bedroom
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("bedroom", "%s %s", sn.c_str(), pt.c_str());
+          
+          if ((sn == "S05A" || sn == "S06C" || sn == "S06D" || sn == "S07A" || sn == "S07B") && pt == "LP") {
+            id(chl_01).turn_off().perform();
+            id(chl_02).turn_off().perform();
+          }
+          
+          if ((sn == "S05A" || sn == "S06D" || sn == "S07B") && pt == "SP") {
+            id(chl_01).toggle().perform();
+          }
+
+          if ((sn == "S06C" || sn == "S07A") && pt == "SP") {
+            id(chl_02).toggle().perform();
+          }
+
   - id: changeLightsState
     parameters:
       index: int
@@ -140,19 +161,109 @@ binary_sensor:
           - OFF for at least 0.1s
         then:
           - script.execute:
-              id: changeLightsState
-              index: 0
-              lightA: !lambda 'return id(chl_01);'
-              lightB: !lambda 'return id(chl_02);'
+              id: bedroom
+              sn: "S06C"
+              pt: "SP"
         invalid_cooldown: 0.5s
       - timing:
           - ON for at least 0.7s
         then:
           - script.execute:
-              id: offLights
-              index: 0
-              lightA: !lambda 'return id(chl_01);'
-              lightB: !lambda 'return id(chl_02);'
+              id: bedroom
+              sn: "S06C"
+              pt: "LP"
+        invalid_cooldown: 0.5s
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_in_s1_d
+    remote_id: in_s1_d
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S06D"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S06D"
+              pt: "LP"
+        invalid_cooldown: 0.5s
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_in_s2_a
+    remote_id: in_s2_a
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S07A"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S07A"
+              pt: "LP"
+        invalid_cooldown: 0.5s
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_in_s2_b
+    remote_id: in_s2_b
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S07B"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S07B"
+              pt: "LP"
+        invalid_cooldown: 0.5s
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_in_s3_a
+    remote_id: in_s3_a
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S05A"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - script.execute:
+              id: bedroom
+              sn: "S05A"
+              pt: "LP"
         invalid_cooldown: 0.5s
 
   - platform: gpio
