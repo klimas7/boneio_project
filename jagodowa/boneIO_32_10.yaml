@@ -79,6 +79,67 @@ globals:
     type: int[3]
 
 script:
+  - id: testExample
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("test example", "%s %s", sn.c_str(), pt.c_str());
+          
+          auto isOnO3 = id(light_03).current_values.is_on();
+          auto isOnO4 = id(light_04).current_values.is_on();
+          
+          if (sn == "S03D") {
+            // 0 0 -> 1 0 -> 0 1 -> 1 1
+            if (pt == "SP") {
+              if ((!isOnO3 && !isOnO4) || (isOnO3 && isOnO4)) {
+                id(light_03).turn_on().perform();
+                id(light_04).turn_off().perform();
+              }
+          
+              if (isOnO3 && !isOnO4) {
+                id(light_03).turn_off().perform();
+                id(light_04).turn_on().perform();
+              }
+          
+              if (!isOnO3 && isOnO4) {
+                id(light_03).turn_on().perform();
+                id(light_04).turn_on().perform();
+              }
+            }
+            
+            if (pt == "LP") {
+              id(light_03).turn_off().perform();
+              id(light_04).turn_off().perform();
+            }
+          }
+          
+          if (sn == "S03C") {
+            // 0 0 -> 1 0 -> 1 1 -> 0 1
+            if (pt == "SP") {
+              if ((!isOnO3 && !isOnO4) || (!isOnO3 && isOnO4)) {
+                id(light_03).turn_on().perform();
+                id(light_04).turn_off().perform();
+              }
+          
+              if (isOnO3 && !isOnO4) {
+                id(light_03).turn_on().perform();
+                id(light_04).turn_on().perform();
+              }
+          
+              if (isOnO3 && isOnO4) {
+                id(light_03).turn_off().perform();
+                id(light_04).turn_on().perform();
+              }
+            }
+          
+            if (pt == "LP") {
+              id(light_03).turn_off().perform();
+              id(light_04).turn_off().perform();
+            }
+          }
+
   - id: bedroom
     parameters:
       sn: string #switch name
@@ -133,7 +194,6 @@ script:
               id(light_02).turn_off().perform();
             }
           }
-          
 
   - id: changeLightsState
     parameters:
@@ -524,9 +584,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_11
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - logger.log: "S3_C SP -> Test prawa"
+          - script.execute:
+              id: testExample
+              sn: "S03C"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - logger.log: "S3_C LP -> Test prawa"
+          - script.execute:
+              id: testExample
+              sn: "S03C"
+              pt: "LP"
+        invalid_cooldown: 0.5s
 
   - platform: gpio
     name: S3_D
@@ -537,9 +614,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_12
+    on_multi_click:
+      - timing:
+          - ON for at most 0.4s
+          - OFF for at least 0.1s
+        then:
+          - logger.log: "S3_D SP -> Test lewa"
+          - script.execute:
+              id: testExample
+              sn: "S03D"
+              pt: "SP"
+        invalid_cooldown: 0.5s
+      - timing:
+          - ON for at least 0.7s
+        then:
+          - logger.log: "S3_D LP -> Test lewa"
+          - script.execute:
+              id: testExample
+              sn: "S03D"
+              pt: "LP"
+        invalid_cooldown: 0.5s
 
   - platform: gpio
     name: IN_13
