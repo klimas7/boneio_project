@@ -27,6 +27,38 @@ ethernet:
   phy_addr: 1
   power_pin: GPIO16
 
+udp:
+
+packet_transport:
+  - id: transport
+    platform: udp
+    update_interval: 5s
+    encryption: 'JAG_BONEIO1_KEY' #set it to yours shared secret key
+    rolling_code_enable: true
+    binary_sensors:
+      - S02B_P #L01 & L02 Salon dl_02
+      - S03B_P #L01 & L02 Salon dl_02
+      - S05_P  #L03 & L04 Sypialnia dl_01
+      - S06_PG #L03 & L04 Sypialnia dl_01
+      - S06_PD #L03 & L04 Sypialnia dl_01
+      - S07_LG #L03 & L04 Sypialnia dl_01
+      - S07_LD #L03 & L04 Sypialnia dl_01
+      - S08_P  #Lazienka  dl_02
+      - S08_L  #Lazienka  dl_02
+      - S09_G  #Lazienka  dl_02
+      - S09_D  #Przedpokuj dl_01
+      - S10    #Przedpokuj dl_01
+      - S11_P  #Przedpokuj dl_01
+      - S12_P  #Gabinet    dl_01
+      - CO_1   #Przedpokuj dl_01
+      - CO_2   #Przedpokuj dl_01
+      - CZ     #All dl_01 & dl_02
+    providers:
+      - name: boneio-dr-8ch-03-7d86e0
+        encryption: 'JAG_BONEIO2_KEY' #set it to yours shared secret key
+      - name: boneio-dr-8ch-03-7c8500
+        encryption: 'JAG_BONEIO3_KEY' #set it to yours shared secret key
+
 dashboard_import:
   package_import_url: github://boneIO-eu/esphome/boneio-32x10_lights_v0_7.yaml@latest
   import_full_config: true
