@@ -84,133 +84,133 @@ time:
 
 light:
   - platform: binary
-    name: 'Light 01'
+    name: 'Salon/Wypoczynek A'
     output: out_01
-    id: light_01
+    id: O01_A
   - platform: binary
-    name: 'Light 02'
+    name: 'Salon/Wypoczynek B'
     output: out_02
-    id: light_02
+    id: O01_B
   - platform: binary
-    name: 'Light 03'
+    name: 'Salon/Jadalnia A'
     output: out_03
-    id: light_03
+    id: O02_A
   - platform: binary
-    name: 'Light 04'
+    name: 'Salon/Jadalnia B'
     output: out_04
-    id: light_04
+    id: O02_B
   - platform: binary
-    name: 'Light 05'
+    name: 'Salon/Kuchnia A'
     output: out_05
-    id: light_05
+    id: O03_A
   - platform: binary
-    name: 'Light 06'
+    name: 'Salon/Kuchnia B'
     output: out_06
-    id: light_06
+    id: O03_B
   - platform: binary
-    name: 'Light 07'
+    name: 'Oswietlenie elewacja pole'
     output: out_07
-    id: light_07
+    id: O04
   - platform: binary
-    name: 'Light 08'
+    name: 'Oswietlenie podbitka'
     output: out_08
-    id: light_08
+    id: O05
   - platform: binary
-    name: 'Light 09'
+    name: 'Gniazdo zewnetrzne podbitka pole'
     output: out_09
-    id: light_09
+    id: GZ01
   - platform: binary
-    name: 'Light 10'
+    name: '_nieuzywane_01'
     output: out_10
-    id: light_10
+    id: dont_use_01
   - platform: binary
-    name: 'Light 11'
+    name: 'Sypoialnia lozko prawa'
     output: out_11
-    id: light_11
+    id: O07
   - platform: binary
-    name: 'Light 12'
+    name: 'Sypoialnia lozko lewa'
     output: out_12
-    id: light_12
+    id: O06
   - platform: binary
-    name: 'Light 13'
+    name: 'Sypialnia glowne'
     output: out_13
-    id: light_13
+    id: O08
   - platform: binary
-    name: 'Light 14'
+    name: 'Lazienka glowne'
     output: out_14
-    id: light_14
+    id: O09
   - platform: binary
-    name: 'Light 15'
+    name: 'Ganinet glowne'
     output: out_15
-    id: light_15
+    id: O10
   - platform: binary
-    name: 'Light 16'
+    name: '_nieuzywane_02'
     output: out_16
-    id: light_16
+    id: dont_use_02
   - platform: binary
-    name: 'Light 17'
+    name: 'Oswietlenie wejscie elewacja'
     output: out_17
-    id: light_17
+    id: O11
   - platform: binary
-    name: 'Light 18'
+    name: 'Oswietlenie wejscie'
     output: out_18
-    id: light_18
+    id: O12
   - platform: binary
-    name: 'Light 19'
+    name: 'Gniazdo zewnetrzne zachod'
     output: out_19
-    id: light_19
+    id: GZ02
   - platform: binary
-    name: 'Light 20'
+    name: 'Gniazdo zewnetrzne elewacja wejscie'
     output: out_20
-    id: light_20
+    id: GZ03
   - platform: binary
-    name: 'Light 21'
+    name: '_nieuzywane_03'
     output: out_21
-    id: light_21
+    id: dont_use_03
   - platform: binary
-    name: 'Light 22'
+    name: '_nieuzywane_04'
     output: out_22
-    id: light_22
+    id: dont_use_04
   - platform: binary
-    name: 'Light 23'
+    name: '_nieuzywane_05'
     output: out_23
-    id: light_23
+    id: dont_use_05
   - platform: binary
-    name: 'Light 24'
+    name: '_nieuzywane_06'
     output: out_24
-    id: light_24
+    id: dont_use_06
   - platform: binary
-    name: 'Light 25'
+    name: '_nieuzywane_07'
     output: out_25
-    id: light_25
+    id: dont_use_07
   - platform: binary
-    name: 'Light 26'
+    name: '_nieuzywane_08'
     output: out_26
-    id: light_26
+    id: dont_use_08
   - platform: binary
-    name: 'Light 27'
+    name: '_nieuzywane_09'
     output: out_27
-    id: light_27
+    id: dont_use_09
   - platform: binary
-    name: 'Light 28'
+    name: '_nieuzywane_10'
     output: out_28
-    id: light_28
+    id: dont_use_10
   - platform: binary
-    name: 'Light 29'
+    name: '_nieuzywane_11'
     output: out_29
-    id: light_29
+    id: dont_use_11
   - platform: binary
-    name: 'Light 30'
+    name: '_nieuzywane_12'
     output: out_30
-    id: light_30
+    id: dont_use_12
   - platform: binary
-    name: 'Light 31'
+    name: '_nieuzywane_13'
     output: out_31
-    id: light_31
+    id: dont_use_13
   - platform: binary
-    name: 'Light 32'
+    name: '_nieuzywane_14'
     output: out_32
-    id: light_32
+    id: dont_use_14
 
 binary_sensor:
   - platform: gpio
@@ -222,9 +222,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_01
+#    on_press:
+#      then:
+#        - light.toggle: light_01
 
   - platform: gpio
     name: 'IN_02'
@@ -235,9 +235,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_02
+#    on_press:
+#      then:
+#        - light.toggle: light_02
 
   - platform: gpio
     name: 'IN_03'
@@ -248,9 +248,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_03
+#    on_press:
+#      then:
+#        - light.toggle: light_03
 
   - platform: gpio
     name: 'IN_04'
@@ -261,9 +261,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_04
+#    on_press:
+#      then:
+#        - light.toggle: light_04
 
   - platform: gpio
     name: 'IN_05'
@@ -274,9 +274,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_05
+#    on_press:
+#      then:
+#        - light.toggle: light_05
 
   - platform: gpio
     name: 'IN_06'
@@ -287,9 +287,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_06
+#    on_press:
+#      then:
+#        - light.toggle: light_06
 
   - platform: gpio
     name: 'IN_07'
@@ -300,9 +300,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_07
+#    on_press:
+#      then:
+#        - light.toggle: light_07
 
   - platform: gpio
     name: 'IN_08'
@@ -313,9 +313,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_08
+#    on_press:
+#      then:
+#        - light.toggle: light_08
 
   - platform: gpio
     name: 'IN_09'
@@ -326,9 +326,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_09
+#    on_press:
+#      then:
+#        - light.toggle: light_09
 
   - platform: gpio
     name: 'IN_10'
@@ -339,9 +339,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_10
+#    on_press:
+#      then:
+#        - light.toggle: light_10
 
   - platform: gpio
     name: 'IN_11'
@@ -352,9 +352,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_11
+#    on_press:
+#      then:
+#        - light.toggle: light_11
 
   - platform: gpio
     name: 'IN_12'
@@ -365,9 +365,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_12
+#    on_press:
+#      then:
+#        - light.toggle: light_12
 
   - platform: gpio
     name: 'IN_13'
@@ -378,9 +378,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_13
+#    on_press:
+#      then:
+#        - light.toggle: light_13
 
   - platform: gpio
     name: 'IN_14'
@@ -391,9 +391,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_14
+#    on_press:
+#      then:
+#        - light.toggle: light_14
 
   - platform: gpio
     name: 'IN_15'
@@ -404,9 +404,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_15
+#    on_press:
+#      then:
+#        - light.toggle: light_15
 
   - platform: gpio
     name: 'IN_16'
@@ -417,9 +417,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_16
+#    on_press:
+#      then:
+#        - light.toggle: light_16
 
   - platform: gpio
     name: 'IN_17'
@@ -430,9 +430,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_17
+#    on_press:
+#      then:
+#        - light.toggle: light_17
 
   - platform: gpio
     name: 'IN_18'
@@ -443,9 +443,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_18
+#    on_press:
+#      then:
+#        - light.toggle: light_18
 
   - platform: gpio
     name: 'IN_19'
@@ -456,9 +456,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_19
+#    on_press:
+#      then:
+#        - light.toggle: light_19
 
   - platform: gpio
     name: 'IN_20'
@@ -469,9 +469,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_20
+#    on_press:
+#      then:
+#        - light.toggle: light_20
 
   - platform: gpio
     name: 'IN_21'
@@ -482,9 +482,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_21
+#    on_press:
+#      then:
+#        - light.toggle: light_21
 
   - platform: gpio
     name: 'IN_22'
@@ -495,9 +495,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_22
+#    on_press:
+#      then:
+#        - light.toggle: light_22
 
   - platform: gpio
     name: 'IN_23'
@@ -508,9 +508,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_23
+#    on_press:
+#      then:
+#        - light.toggle: light_23
 
   - platform: gpio
     name: 'IN_24'
@@ -521,9 +521,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_24
+#    on_press:
+#      then:
+#        - light.toggle: light_24
 
   - platform: gpio
     name: 'IN_25'
@@ -534,9 +534,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_25
+#    on_press:
+#      then:
+#        - light.toggle: light_25
 
   - platform: gpio
     name: 'IN_26'
@@ -547,9 +547,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_26
+#    on_press:
+#      then:
+#        - light.toggle: light_26
 
   - platform: gpio
     name: 'IN_27'
@@ -560,9 +560,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_27
+#    on_press:
+#      then:
+#        - light.toggle: light_27
 
   - platform: gpio
     name: 'IN_28'
@@ -573,9 +573,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_28
+#    on_press:
+#      then:
+#        - light.toggle: light_28
 
   - platform: gpio
     name: 'IN_29'
@@ -586,9 +586,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_29
+#    on_press:
+#      then:
+#        - light.toggle: light_29
 
   - platform: gpio
     name: 'IN_30'
@@ -599,9 +599,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_30
+#    on_press:
+#      then:
+#        - light.toggle: light_30
 
   - platform: gpio
     name: 'IN_31'
@@ -612,9 +612,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_31
+#    on_press:
+#      then:
+#        - light.toggle: light_31
 
   - platform: gpio
     name: 'IN_32'
@@ -625,9 +625,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - light.toggle: light_32
+#    on_press:
+#      then:
+#        - light.toggle: light_32
 
   - platform: gpio
     name: 'IN_33'
