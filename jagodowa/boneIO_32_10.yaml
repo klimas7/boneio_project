@@ -214,8 +214,8 @@ light:
 
 binary_sensor:
   - platform: gpio
-    name: 'IN_01'
-    id: in_01
+    name: 'Salon przy oknie tarasowym - Prawa'
+    id: S01_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
@@ -227,8 +227,8 @@ binary_sensor:
 #        - light.toggle: light_01
 
   - platform: gpio
-    name: 'IN_02'
-    id: in_02
+    name: 'Salon przy oknie tarasowym - Lewa'
+    id: S01_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 1
@@ -240,8 +240,8 @@ binary_sensor:
 #        - light.toggle: light_02
 
   - platform: gpio
-    name: 'IN_03'
-    id: in_03
+    name: 'Salon przy wyspie A - Prawa'
+    id: S02A_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 2
@@ -253,8 +253,8 @@ binary_sensor:
 #        - light.toggle: light_03
 
   - platform: gpio
-    name: 'IN_04'
-    id: in_04
+    name: 'Salon przy wyspie A - Lewa'
+    id: S02A_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 3
@@ -266,8 +266,8 @@ binary_sensor:
 #        - light.toggle: light_04
 
   - platform: gpio
-    name: 'IN_05'
-    id: in_05
+    name: 'Salon przy wyspie B - Prawa'
+    id: S02B_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 4
@@ -279,8 +279,8 @@ binary_sensor:
 #        - light.toggle: light_05
 
   - platform: gpio
-    name: 'IN_06'
-    id: in_06
+    name: 'Salon przy wyspie B - Lewa'
+    id: S02B_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 5
@@ -292,8 +292,8 @@ binary_sensor:
 #        - light.toggle: light_06
 
   - platform: gpio
-    name: 'IN_07'
-    id: in_07
+    name: 'Salon przy wejsciu A - Prawa'
+    id: S03A_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 6
@@ -305,8 +305,8 @@ binary_sensor:
 #        - light.toggle: light_07
 
   - platform: gpio
-    name: 'IN_08'
-    id: in_08
+    name: 'Salon przy wejsciu A - Lewa'
+    id: S03A_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 8
@@ -318,8 +318,8 @@ binary_sensor:
 #        - light.toggle: light_08
 
   - platform: gpio
-    name: 'IN_09'
-    id: in_09
+    name: 'Salon przy wejsciu B - Prawa'
+    id: S03B_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 9
@@ -331,8 +331,8 @@ binary_sensor:
 #        - light.toggle: light_09
 
   - platform: gpio
-    name: 'IN_10'
-    id: in_10
+    name: 'Salon przy wejsciu B - Lewa'
+    id: S03B_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 10
@@ -344,8 +344,8 @@ binary_sensor:
 #        - light.toggle: light_10
 
   - platform: gpio
-    name: 'IN_11'
-    id: in_11
+    name: 'Sypialnia przy oknie tarasowym - Prawa'
+    id: S04_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 11
@@ -357,8 +357,8 @@ binary_sensor:
 #        - light.toggle: light_11
 
   - platform: gpio
-    name: 'IN_12'
-    id: in_12
+    name: 'Sypialnia przy oknie tarasowym - Lewa'
+    id: S04_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 12
@@ -370,8 +370,8 @@ binary_sensor:
 #        - light.toggle: light_12
 
   - platform: gpio
-    name: 'IN_13'
-    id: in_13
+    name: 'Sypialnia przy wejsciu - Prawa'
+    id: S05_P
     pin:
       pcf8574: pcf_inputs_1to14
       number: 13
@@ -383,8 +383,8 @@ binary_sensor:
 #        - light.toggle: light_13
 
   - platform: gpio
-    name: 'IN_14'
-    id: in_14
+    name: 'Sypialnia przy wejsciu - Lewa'
+    id: S05_L
     pin:
       pcf8574: pcf_inputs_1to14
       number: 14
@@ -396,8 +396,8 @@ binary_sensor:
 #        - light.toggle: light_14
 
   - platform: gpio
-    name: 'IN_15'
-    id: in_15
+    name: 'Sypialnia przy łużku po prawej - Prawa Dol'
+    id: S06_PD
     pin:
       pcf8574: pcf_inputs_15to28
       number: 6
@@ -409,8 +409,8 @@ binary_sensor:
 #        - light.toggle: light_15
 
   - platform: gpio
-    name: 'IN_16'
-    id: in_16
+    name: 'Sypialnia przy łużku po prawej - Prawa Gora'
+    id: S06_PG
     pin:
       pcf8574: pcf_inputs_15to28
       number: 5
@@ -422,8 +422,8 @@ binary_sensor:
 #        - light.toggle: light_16
 
   - platform: gpio
-    name: 'IN_17'
-    id: in_17
+    name: 'Sypialnia przy łużku po prawej - Lewa Dol'
+    id: S06_LD
     pin:
       pcf8574: pcf_inputs_15to28
       number: 4
@@ -435,8 +435,8 @@ binary_sensor:
 #        - light.toggle: light_17
 
   - platform: gpio
-    name: 'IN_18'
-    id: in_18
+    name: 'Sypialnia przy łużku po prawej - Lewa Gora'
+    id: S06_LG
     pin:
       pcf8574: pcf_inputs_15to28
       number: 3
@@ -448,8 +448,8 @@ binary_sensor:
 #        - light.toggle: light_18
 
   - platform: gpio
-    name: 'IN_19'
-    id: in_19
+    name: 'Sypialnia przy łużku po lewej - Prawa Dol'
+    id: S07_PD
     pin:
       pcf8574: pcf_inputs_15to28
       number: 2
@@ -461,8 +461,8 @@ binary_sensor:
 #        - light.toggle: light_19
 
   - platform: gpio
-    name: 'IN_20'
-    id: in_20
+    name: 'Sypialnia przy łużku po lewej - Prawa Gora'
+    id: S07_PG
     pin:
       pcf8574: pcf_inputs_15to28
       number: 1
@@ -474,8 +474,8 @@ binary_sensor:
 #        - light.toggle: light_20
 
   - platform: gpio
-    name: 'IN_21'
-    id: in_21
+    name: 'Sypialnia przy łużku po lewej - Lewa Dol'
+    id: S07_LD
     pin:
       pcf8574: pcf_inputs_15to28
       number: 0
@@ -487,8 +487,8 @@ binary_sensor:
 #        - light.toggle: light_21
 
   - platform: gpio
-    name: 'IN_22'
-    id: in_22
+    name: 'Sypialnia przy łużku po lewej - Lewa Gora'
+    id: S07_LG
     pin:
       pcf8574: pcf_inputs_15to28
       number: 8
@@ -500,8 +500,8 @@ binary_sensor:
 #        - light.toggle: light_22
 
   - platform: gpio
-    name: 'IN_23'
-    id: in_23
+    name: 'Lazienka przy lustrze - Prawa'
+    id: S08_P
     pin:
       pcf8574: pcf_inputs_15to28
       number: 9
@@ -513,8 +513,8 @@ binary_sensor:
 #        - light.toggle: light_23
 
   - platform: gpio
-    name: 'IN_24'
-    id: in_24
+    name: 'Lazienka przy lustrze - Lewa'
+    id: S08_L
     pin:
       pcf8574: pcf_inputs_15to28
       number: 10
@@ -526,8 +526,8 @@ binary_sensor:
 #        - light.toggle: light_24
 
   - platform: gpio
-    name: 'IN_25'
-    id: in_25
+    name: 'Wejscie do lazienki - Gora'
+    id: S09_G
     pin:
       pcf8574: pcf_inputs_15to28
       number: 11
@@ -539,8 +539,8 @@ binary_sensor:
 #        - light.toggle: light_25
 
   - platform: gpio
-    name: 'IN_26'
-    id: in_26
+    name: 'Wejscie do lazienki - Dol'
+    id: S09_D
     pin:
       pcf8574: pcf_inputs_15to28
       number: 12
@@ -552,8 +552,8 @@ binary_sensor:
 #        - light.toggle: light_26
 
   - platform: gpio
-    name: 'IN_27'
-    id: in_27
+    name: 'Przedpokuj wejscie do sypialni/salonu'
+    id: S10
     pin:
       pcf8574: pcf_inputs_15to28
       number: 13
@@ -565,8 +565,8 @@ binary_sensor:
 #        - light.toggle: light_27
 
   - platform: gpio
-    name: 'IN_28'
-    id: in_28
+    name: 'Przedpokuj wejscie do domu - Prawa'
+    id: S11_P
     pin:
       pcf8574: pcf_inputs_15to28
       number: 14
@@ -578,8 +578,8 @@ binary_sensor:
 #        - light.toggle: light_28
 
   - platform: gpio
-    name: 'IN_29'
-    id: in_29
+    name: 'Przedpokuj wejscie do domu - Lewa'
+    id: S11_L
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 0
@@ -591,8 +591,8 @@ binary_sensor:
 #        - light.toggle: light_29
 
   - platform: gpio
-    name: 'IN_30'
-    id: in_30
+    name: 'Gabinet - Prawa'
+    id: S12_P
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 1
@@ -604,8 +604,8 @@ binary_sensor:
 #        - light.toggle: light_30
 
   - platform: gpio
-    name: 'IN_31'
-    id: in_31
+    name: 'Gabinet - Lewa'
+    id: S12_L
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 2
@@ -617,8 +617,8 @@ binary_sensor:
 #        - light.toggle: light_31
 
   - platform: gpio
-    name: 'IN_32'
-    id: in_32
+    name: 'Czujnik obecnosci 1'
+    id: CO_1
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 3
@@ -630,7 +630,8 @@ binary_sensor:
 #        - light.toggle: light_32
 
   - platform: gpio
-    name: 'IN_33'
+    name: 'Czujnik obecnosci 2'
+    id: CO_2
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 4
@@ -639,7 +640,8 @@ binary_sensor:
       inverted: true
 
   - platform: gpio
-    name: 'IN_34'
+    name: 'Czujnik zmierzchowy'
+    id: CZ
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 5
