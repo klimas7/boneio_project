@@ -1,11 +1,11 @@
 substitutions:
-  name: boneio-32-l-07-73be28
-  friendly_name: BoneIO ESP 32x10 Lights 73be28
-  serial_prefix: esp   #Don't change it.
+  name: boneio-32-l-07-39d104
+  friendly_name: 'BoneIO ESP 32x10 Lights 39d104'
+  serial_prefix: 'esp' #Don't change it.
 
 esphome:
-  name: ${name}
-  friendly_name: ${friendly_name}
+  name: '${name}'
+  friendly_name: '${friendly_name}'
   name_add_mac_suffix: false
   project:
     name: boneio.32x10-lights
@@ -13,33 +13,19 @@ esphome:
 
 esp32:
   board: nodemcu-32s
+  framework:
+    type: esp-idf
 
 ethernet:
   id: eth
   type: LAN8720
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  clk_mode: GPIO0_IN
+  clk:
+    pin: GPIO0
+    mode: CLK_EXT_IN
   phy_addr: 1
   power_pin: GPIO16
-
-udp:
-
-packet_transport:
-  - id: transport
-    platform: udp
-    update_interval: 5s
-    encryption: 'BKL_BONEIO1_KEY' #set it to yours shared secret key
-    rolling_code_enable: true
-    binary_sensors:
-      - in_s1_c
-      - in_s1_d
-      - in_s2_a
-      - in_s2_b
-      - in_s3_a
-    providers:
-      - name: boneio-dr-8ch-03-30f8d8
-        encryption: 'BKL_BONEIO2_KEY' #set it to yours shared secret key
 
 dashboard_import:
   package_import_url: github://boneIO-eu/esphome/boneio-32x10_lights_v0_7.yaml@latest
@@ -48,21 +34,40 @@ dashboard_import:
 packages:
   internals_packages:
     url: https://github.com/boneIO-eu/esphome
-    ref: v1.6.0
-    files: [devices/buzzer.yaml, devices/serial_no.yaml, devices_v0_7/display.yaml,
-            devices_v0_7/i2c.yaml, devices_v0_7-v0_9/ina219.yaml, devices_v0_7-v0_9/lm75b.yaml,
-            devices_v0_7-v0_9/pcf.yaml, boards/output/out01_02.yaml, boards/output/out03_04.yaml,
-            boards/output/out05_06.yaml, boards/output/out07_08.yaml, boards/output/out09_10.yaml,
-            boards/output/out11_12.yaml, boards/output/out13_14.yaml, boards/output/out15_16.yaml,
-            boards/output/out17_18.yaml, boards/output/out19_20.yaml, boards/output/out21_22.yaml,
-            boards/output/out23_24.yaml, boards/output/out25_26.yaml, boards/output/out27_28.yaml,
-            boards/output/out29_30.yaml, boards/output/out31_32.yaml]
+    ref: v1.7.1
+    files: [
+      'devices/buzzer.yaml',
+      'devices/serial_no.yaml',
+      'devices_v0_7/display.yaml',
+      'devices_v0_7/i2c.yaml',
+      'devices_v0_7-v0_9/ina219.yaml',
+      'devices_v0_7-v0_9/lm75b.yaml',
+      'devices_v0_7-v0_9/pcf.yaml',
+      'boards/output/out01_02.yaml',
+      'boards/output/out03_04.yaml',
+      'boards/output/out05_06.yaml',
+      'boards/output/out07_08.yaml',
+      'boards/output/out09_10.yaml',
+      'boards/output/out11_12.yaml',
+      'boards/output/out13_14.yaml',
+      'boards/output/out15_16.yaml',
+      'boards/output/out17_18.yaml',
+      'boards/output/out19_20.yaml',
+      'boards/output/out21_22.yaml',
+      'boards/output/out23_24.yaml',
+      'boards/output/out25_26.yaml',
+      'boards/output/out27_28.yaml',
+      'boards/output/out29_30.yaml',
+      'boards/output/out31_32.yaml',
+      # 'devices_v0_7-v0_9/one_wire.yaml',
+    ]
 
 logger:
 api:
   reboot_timeout: 0s
 ota:
   - platform: esphome
+  - platform: web_server
 
 web_server:
   port: 80
@@ -74,569 +79,295 @@ time:
     timezone: Europe/Warsaw
     id: homeassistant_time
 
-globals:
-  - id: states
-    type: int[3]
-
-script:
-  - id: testExample
-    parameters:
-      sn: string #switch name
-      pt: string #push type
-    then:
-      - lambda: |-
-          ESP_LOGI("test example", "%s %s", sn.c_str(), pt.c_str());
-          
-          auto isOnO3 = id(light_03).current_values.is_on();
-          auto isOnO4 = id(light_04).current_values.is_on();
-          
-          if (sn == "S03D") {
-            // 0 0 -> 1 0 -> 0 1 -> 1 1
-            if (pt == "SP") {
-              if ((!isOnO3 && !isOnO4) || (isOnO3 && isOnO4)) {
-                id(light_03).turn_on().perform();
-                id(light_04).turn_off().perform();
-              }
-          
-              if (isOnO3 && !isOnO4) {
-                id(light_03).turn_off().perform();
-                id(light_04).turn_on().perform();
-              }
-          
-              if (!isOnO3 && isOnO4) {
-                id(light_03).turn_on().perform();
-                id(light_04).turn_on().perform();
-              }
-            }
-            
-            if (pt == "LP") {
-              id(light_03).turn_off().perform();
-              id(light_04).turn_off().perform();
-            }
-          }
-          
-          if (sn == "S03C") {
-            // 0 0 -> 1 0 -> 1 1 -> 0 1
-            if (pt == "SP") {
-              if ((!isOnO3 && !isOnO4) || (!isOnO3 && isOnO4)) {
-                id(light_03).turn_on().perform();
-                id(light_04).turn_off().perform();
-              }
-          
-              if (isOnO3 && !isOnO4) {
-                id(light_03).turn_on().perform();
-                id(light_04).turn_on().perform();
-              }
-          
-              if (isOnO3 && isOnO4) {
-                id(light_03).turn_off().perform();
-                id(light_04).turn_on().perform();
-              }
-            }
-          
-            if (pt == "LP") {
-              id(light_03).turn_off().perform();
-              id(light_04).turn_off().perform();
-            }
-          }
-
-  - id: bedroom
-    parameters:
-      sn: string #switch name
-      pt: string #push type
-    then:
-      - lambda: |-
-          ESP_LOGI("bedroom", "%s %s", sn.c_str(), pt.c_str());
-          //----  O08 - toggle  ----
-          if ((sn == "S05B" || sn == "S06B" || sn == "S07D") && pt == "SP") {
-            id(light_01).toggle().perform();
-          }
-          
-          //----  S05B  ----
-          if (sn == "S05B" && pt == "LP") { 
-              id(light_01).turn_off().perform();
-              id(light_02).turn_off().perform();
-              id(light_03).turn_off().perform();
-          }
-          
-          //----  S06A - S06B  ----
-          
-          if (sn == "S06A" && pt == "SP") {
-            id(light_02).toggle().perform();
-          }
-          
-          if ((sn == "S06A" || sn == "S06B") && pt == "LP") {
-            auto isOn8 = id(light_01).current_values.is_on();
-            auto isOn6 = id(light_02).current_values.is_on();
-          
-            if (isOn6 || isOn8) {
-              id(light_01).turn_off().perform();
-              id(light_02).turn_off().perform();
-            } else {
-              id(light_03).turn_off().perform();
-            }  
-          }
-          
-          //----  S07C - S07D  ----
-          
-          if (sn == "S07C" && pt == "SP") {
-            id(light_03).toggle().perform();
-          }
-                    
-          if ((sn == "S07C" || sn == "S07D") && pt == "LP") {
-            auto isOn8 = id(light_01).current_values.is_on();
-            auto isOn7 = id(light_03).current_values.is_on();
-            
-            if (isOn7 || isOn8) {
-              id(light_01).turn_off().perform();
-              id(light_03).turn_off().perform();
-            } else {
-              id(light_02).turn_off().perform();
-            }
-          }
-
-  - id: changeLightsState
-    parameters:
-      index: int
-      lightA: light::LightState*
-      lightB: light::LightState*
-    then:
-      - lambda: |-
-          switch (id(states)[index]) {
-              case 0: // LA(on), LB(off)  
-                lightA->turn_on().perform();
-                lightB->turn_off().perform();
-                break;
-              case 1: // LA(off), LB(on)
-                lightA->turn_off().perform();
-                lightB->turn_on().perform();
-                break;
-              case 2: // L1(on), L2(on)
-                lightA->turn_on().perform();
-                lightB->turn_on().perform();
-                break;
-            }
-
-          id(states)[index] = (id(states)[index] + 1) % 3;
-  - id: offLights
-    parameters:
-      index: int
-      lightA: light::LightState*
-      lightB: light::LightState*
-    then:
-      - lambda: |-
-          id(states)[index] = 0;
-          lightA->turn_off().perform();
-          lightB->turn_off().perform();
-
 light:
   - platform: binary
-    name: Light 01
+    name: 'Light 01'
     output: out_01
     id: light_01
   - platform: binary
-    name: Light 02
+    name: 'Light 02'
     output: out_02
     id: light_02
   - platform: binary
-    name: Light 03
+    name: 'Light 03'
     output: out_03
     id: light_03
   - platform: binary
-    name: Light 04
+    name: 'Light 04'
     output: out_04
     id: light_04
   - platform: binary
-    name: Light 05
+    name: 'Light 05'
     output: out_05
     id: light_05
   - platform: binary
-    name: Light 06
+    name: 'Light 06'
     output: out_06
     id: light_06
   - platform: binary
-    name: Light 07
+    name: 'Light 07'
     output: out_07
     id: light_07
   - platform: binary
-    name: Light 08
+    name: 'Light 08'
     output: out_08
     id: light_08
   - platform: binary
-    name: Light 09
+    name: 'Light 09'
     output: out_09
     id: light_09
   - platform: binary
-    name: Light 10
+    name: 'Light 10'
     output: out_10
     id: light_10
   - platform: binary
-    name: Light 11
+    name: 'Light 11'
     output: out_11
     id: light_11
   - platform: binary
-    name: Light 12
+    name: 'Light 12'
     output: out_12
     id: light_12
   - platform: binary
-    name: Light 13
+    name: 'Light 13'
     output: out_13
     id: light_13
   - platform: binary
-    name: Light 14
+    name: 'Light 14'
     output: out_14
     id: light_14
   - platform: binary
-    name: Light 15
+    name: 'Light 15'
     output: out_15
     id: light_15
   - platform: binary
-    name: Light 16
+    name: 'Light 16'
     output: out_16
     id: light_16
   - platform: binary
-    name: Light 17
+    name: 'Light 17'
     output: out_17
     id: light_17
   - platform: binary
-    name: Light 18
+    name: 'Light 18'
     output: out_18
     id: light_18
   - platform: binary
-    name: Light 19
+    name: 'Light 19'
     output: out_19
     id: light_19
   - platform: binary
-    name: Light 20
+    name: 'Light 20'
     output: out_20
     id: light_20
   - platform: binary
-    name: Light 21
+    name: 'Light 21'
     output: out_21
     id: light_21
   - platform: binary
-    name: Light 22
+    name: 'Light 22'
     output: out_22
     id: light_22
   - platform: binary
-    name: Light 23
+    name: 'Light 23'
     output: out_23
     id: light_23
   - platform: binary
-    name: Light 24
+    name: 'Light 24'
     output: out_24
     id: light_24
   - platform: binary
-    name: Light 25
+    name: 'Light 25'
     output: out_25
     id: light_25
   - platform: binary
-    name: Light 26
+    name: 'Light 26'
     output: out_26
     id: light_26
   - platform: binary
-    name: Light 27
+    name: 'Light 27'
     output: out_27
     id: light_27
   - platform: binary
-    name: Light 28
+    name: 'Light 28'
     output: out_28
     id: light_28
   - platform: binary
-    name: Light 29
+    name: 'Light 29'
     output: out_29
     id: light_29
   - platform: binary
-    name: Light 30
+    name: 'Light 30'
     output: out_30
     id: light_30
   - platform: binary
-    name: Light 31
+    name: 'Light 31'
     output: out_31
     id: light_31
   - platform: binary
-    name: Light 32
+    name: 'Light 32'
     output: out_32
     id: light_32
 
 binary_sensor:
   - platform: gpio
-    name: S1_A
-    id: in_s1_a
+    name: 'IN_01'
+    id: in_01
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S1_A SP -> S06A Sypialnia/lozko/prawa/gora"
-          - script.execute:
-              id: bedroom
-              sn: "S06A"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S1_A LP -> S06A Sypialnia/lozko/prawa/gora"
-          - script.execute:
-              id: bedroom
-              sn: "S06A"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_01
 
   - platform: gpio
-    name: S1_B
-    id: in_s1_b
+    name: 'IN_02'
+    id: in_02
     pin:
       pcf8574: pcf_inputs_1to14
       number: 1
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S1_B SP -> S06A Sypialnia/lozko/prawa/dol"
-          - script.execute:
-              id: bedroom
-              sn: "S06B"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S1_B LP -> S06A Sypialnia/lozko/prawa/dol"
-          - script.execute:
-              id: bedroom
-              sn: "S06B"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_02
 
   - platform: gpio
-    name: S1_C
-    id: in_s1_c
+    name: 'IN_03'
+    id: in_03
     pin:
       pcf8574: pcf_inputs_1to14
       number: 2
       mode:
         input: true
       inverted: true
-    # on_press:
-    #   then:
-    #   - light.toggle: light_03
+    on_press:
+      then:
+        - light.toggle: light_03
 
   - platform: gpio
-    name: S1_D
-    id: in_s1_d
+    name: 'IN_04'
+    id: in_04
     pin:
       pcf8574: pcf_inputs_1to14
       number: 3
       mode:
         input: true
       inverted: true
-    # on_press:
-    #   then:
-    #   - light.toggle: light_04
+    on_press:
+      then:
+        - light.toggle: light_04
 
   - platform: gpio
-    name: S2_A
-    id: in_s2_a
+    name: 'IN_05'
+    id: in_05
     pin:
       pcf8574: pcf_inputs_1to14
       number: 4
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_05
+    on_press:
+      then:
+        - light.toggle: light_05
 
   - platform: gpio
-    name: S2_B
-    id: in_s2_b
+    name: 'IN_06'
+    id: in_06
     pin:
       pcf8574: pcf_inputs_1to14
       number: 5
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_06
+    on_press:
+      then:
+        - light.toggle: light_06
 
   - platform: gpio
-    name: S2_C
-    id: in_s2_c
+    name: 'IN_07'
+    id: in_07
     pin:
       pcf8574: pcf_inputs_1to14
       number: 6
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S2_C SP -> S07C Sypialnia/lozko/lewa/gora"
-          - script.execute:
-              id: bedroom
-              sn: "S07C"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S2_C LP -> S07C Sypialnia/lozko/lewa/gora"
-          - script.execute:
-              id: bedroom
-              sn: "S07C"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_07
 
   - platform: gpio
-    name: S2_D
-    id: in_s2_d
+    name: 'IN_08'
+    id: in_08
     pin:
       pcf8574: pcf_inputs_1to14
       number: 8
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S2_D SP -> S07D Sypialnia/lozko/lewa/dol"
-          - script.execute:
-              id: bedroom
-              sn: "S07D"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S2_D LP -> S07D Sypialnia/lozko/lewa/dol"
-          - script.execute:
-              id: bedroom
-              sn: "S07D"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_08
 
   - platform: gpio
-    name: S3_A
-    id: in_s3_a
+    name: 'IN_09'
+    id: in_09
     pin:
       pcf8574: pcf_inputs_1to14
       number: 9
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_09
+    on_press:
+      then:
+        - light.toggle: light_09
 
   - platform: gpio
-    name: S3_B
-    id: in_s3_b
+    name: 'IN_10'
+    id: in_10
     pin:
       pcf8574: pcf_inputs_1to14
       number: 10
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S3_B SP -> S05B Sypialnia/wejscie/lewa"
-          - script.execute:
-              id: bedroom
-              sn: "S05B"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S3_B LP -> S05B Sypialnia/wejscie/lewa"
-          - script.execute:
-              id: bedroom
-              sn: "S05B"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_10
 
   - platform: gpio
-    name: S3_C
-    id: in_s3_c
+    name: 'IN_11'
+    id: in_11
     pin:
       pcf8574: pcf_inputs_1to14
       number: 11
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S3_C SP -> Test prawa"
-          - script.execute:
-              id: testExample
-              sn: "S03C"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S3_C LP -> Test prawa"
-          - script.execute:
-              id: testExample
-              sn: "S03C"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_11
 
   - platform: gpio
-    name: S3_D
-    id: in_s3_d
+    name: 'IN_12'
+    id: in_12
     pin:
       pcf8574: pcf_inputs_1to14
       number: 12
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          - logger.log: "S3_D SP -> Test lewa"
-          - script.execute:
-              id: testExample
-              sn: "S03D"
-              pt: "SP"
-        invalid_cooldown: 0.5s
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - logger.log: "S3_D LP -> Test lewa"
-          - script.execute:
-              id: testExample
-              sn: "S03D"
-              pt: "LP"
-        invalid_cooldown: 0.5s
+    on_press:
+      then:
+        - light.toggle: light_12
 
   - platform: gpio
-    name: IN_13
+    name: 'IN_13'
     id: in_13
     pin:
       pcf8574: pcf_inputs_1to14
@@ -649,7 +380,7 @@ binary_sensor:
         - light.toggle: light_13
 
   - platform: gpio
-    name: IN_14
+    name: 'IN_14'
     id: in_14
     pin:
       pcf8574: pcf_inputs_1to14
@@ -662,7 +393,7 @@ binary_sensor:
         - light.toggle: light_14
 
   - platform: gpio
-    name: IN_15
+    name: 'IN_15'
     id: in_15
     pin:
       pcf8574: pcf_inputs_15to28
@@ -675,7 +406,7 @@ binary_sensor:
         - light.toggle: light_15
 
   - platform: gpio
-    name: IN_16
+    name: 'IN_16'
     id: in_16
     pin:
       pcf8574: pcf_inputs_15to28
@@ -688,7 +419,7 @@ binary_sensor:
         - light.toggle: light_16
 
   - platform: gpio
-    name: IN_17
+    name: 'IN_17'
     id: in_17
     pin:
       pcf8574: pcf_inputs_15to28
@@ -701,7 +432,7 @@ binary_sensor:
         - light.toggle: light_17
 
   - platform: gpio
-    name: IN_18
+    name: 'IN_18'
     id: in_18
     pin:
       pcf8574: pcf_inputs_15to28
@@ -714,7 +445,7 @@ binary_sensor:
         - light.toggle: light_18
 
   - platform: gpio
-    name: IN_19
+    name: 'IN_19'
     id: in_19
     pin:
       pcf8574: pcf_inputs_15to28
@@ -727,7 +458,7 @@ binary_sensor:
         - light.toggle: light_19
 
   - platform: gpio
-    name: IN_20
+    name: 'IN_20'
     id: in_20
     pin:
       pcf8574: pcf_inputs_15to28
@@ -740,7 +471,7 @@ binary_sensor:
         - light.toggle: light_20
 
   - platform: gpio
-    name: IN_21
+    name: 'IN_21'
     id: in_21
     pin:
       pcf8574: pcf_inputs_15to28
@@ -753,7 +484,7 @@ binary_sensor:
         - light.toggle: light_21
 
   - platform: gpio
-    name: IN_22
+    name: 'IN_22'
     id: in_22
     pin:
       pcf8574: pcf_inputs_15to28
@@ -766,7 +497,7 @@ binary_sensor:
         - light.toggle: light_22
 
   - platform: gpio
-    name: IN_23
+    name: 'IN_23'
     id: in_23
     pin:
       pcf8574: pcf_inputs_15to28
@@ -779,7 +510,7 @@ binary_sensor:
         - light.toggle: light_23
 
   - platform: gpio
-    name: IN_24
+    name: 'IN_24'
     id: in_24
     pin:
       pcf8574: pcf_inputs_15to28
@@ -792,7 +523,7 @@ binary_sensor:
         - light.toggle: light_24
 
   - platform: gpio
-    name: IN_25
+    name: 'IN_25'
     id: in_25
     pin:
       pcf8574: pcf_inputs_15to28
@@ -805,7 +536,7 @@ binary_sensor:
         - light.toggle: light_25
 
   - platform: gpio
-    name: IN_26
+    name: 'IN_26'
     id: in_26
     pin:
       pcf8574: pcf_inputs_15to28
@@ -818,7 +549,7 @@ binary_sensor:
         - light.toggle: light_26
 
   - platform: gpio
-    name: IN_27
+    name: 'IN_27'
     id: in_27
     pin:
       pcf8574: pcf_inputs_15to28
@@ -831,7 +562,7 @@ binary_sensor:
         - light.toggle: light_27
 
   - platform: gpio
-    name: IN_28
+    name: 'IN_28'
     id: in_28
     pin:
       pcf8574: pcf_inputs_15to28
@@ -844,7 +575,7 @@ binary_sensor:
         - light.toggle: light_28
 
   - platform: gpio
-    name: IN_29
+    name: 'IN_29'
     id: in_29
     pin:
       pcf8574: pcf_inputs_28to35_menu
@@ -857,7 +588,7 @@ binary_sensor:
         - light.toggle: light_29
 
   - platform: gpio
-    name: IN_30
+    name: 'IN_30'
     id: in_30
     pin:
       pcf8574: pcf_inputs_28to35_menu
@@ -870,7 +601,7 @@ binary_sensor:
         - light.toggle: light_30
 
   - platform: gpio
-    name: IN_31
+    name: 'IN_31'
     id: in_31
     pin:
       pcf8574: pcf_inputs_28to35_menu
@@ -883,7 +614,7 @@ binary_sensor:
         - light.toggle: light_31
 
   - platform: gpio
-    name: IN_32
+    name: 'IN_32'
     id: in_32
     pin:
       pcf8574: pcf_inputs_28to35_menu
@@ -896,7 +627,7 @@ binary_sensor:
         - light.toggle: light_32
 
   - platform: gpio
-    name: IN_33
+    name: 'IN_33'
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 4
@@ -905,7 +636,7 @@ binary_sensor:
       inverted: true
 
   - platform: gpio
-    name: IN_34
+    name: 'IN_34'
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 5
@@ -914,57 +645,23 @@ binary_sensor:
       inverted: true
 
   - platform: gpio
-    name: IN_35
+    name: 'IN_35'
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 6
       mode:
         input: true
       inverted: true
-
-#######################
-### 1 Wire SECTION  ###
-#######################
-one_wire:
-  - platform: gpio
-    pin: GPIO32
-
 ######################
 ### MODBUS SECTION ###
 ######################
 # UNCOMMENT BELOW TO USE MODBUS
-uart:
-  id: uart_pin14_15
-  rx_pin: GPIO14
-  tx_pin: GPIO15
-  baud_rate: 9600
-  stop_bits: 1
-
-
-sensor:
-  - platform: dallas_temp
-    address: 0x1f07237002c46028
-    name: "Room 1"
-
-  - platform: dallas_temp
-    address: 0x110823a1af6e8228
-    name: "Room 2"
-
-  - platform: sdm_meter
-    address: 0x01
-    phase_a:
-      current:
-        name: "SDM120M Current"
-      voltage:
-        name: "SDM230M Voltage"
-      active_power:
-        name: "SDM230M Power"
-    frequency:
-      name: "SDM230M Frequency"
-    total_power:
-      name: "SDM230M Total Power"
-    import_active_energy:
-      name: "SDM230M Import Active Energy"
+# uart:
+#   id: uart_pin14_15
+#   rx_pin: GPIO14
+#   tx_pin: GPIO15
+#   baud_rate: 9600
+#   stop_bits: 1
 
 # modbus:
 #   send_wait_time: 200ms
@@ -972,8 +669,8 @@ sensor:
 #   id: boneio_modbus
 
 # modbus_controller:
-#   - id: sdm120m
-#     address: 0x01
-#     modbus_id: boneio_modbus
+#   - id: YOURDEVICE ID
+#     address: 0x09
+#     modbus_id: mod_bus
 #     setup_priority: -10
 #     update_interval: 60s
