@@ -75,9 +75,12 @@ web_server:
   version: 3
 
 time:
-  - platform: homeassistant
+  - platform: sntp
+    id: sntp_time
     timezone: Europe/Warsaw
-    id: homeassistant_time
+    servers:
+      - ntp1.tp.pl
+      - ntp2.tp.pl
 
 light:
   - platform: binary
