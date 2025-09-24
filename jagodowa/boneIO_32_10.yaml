@@ -114,6 +114,48 @@ time:
       - ntp1.tp.pl
       - ntp2.tp.pl
 
+script:
+  - id: salon
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
+          id(O02_A).toggle().perform();
+
+  - id: sypialnia
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
+
+  - id: gabinet
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
+
+  - id: przedpokuj
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("przedpokuj", "%s %s", sn.c_str(), pt.c_str());
+
+  - id: lazienka
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
+
 light:
   - platform: binary
     name: 'Salon/Wypoczynek A'
@@ -280,9 +322,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_03
+    on_press:
+      then:
+        - logger.log: "S02A_P OP -> Przy wyspie A prawy"
+        - script.execute:
+            id: salon
+            sn: "S02A_P"
+            pt: "OP"
 
   - platform: gpio
     name: 'Salon przy wyspie A - Lewa'
@@ -332,9 +378,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_07
+    on_press:
+      then:
+        - logger.log: "S03A_P OP -> Przy wejsciu A prawy"
+        - script.execute:
+            id: salon
+            sn: "S03A_P"
+            pt: "OP"
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Lewa'
@@ -423,9 +473,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_14
+    on_press:
+      then:
+        - logger.log: "S05_L OP -> Przy wejsciu - Lewa"
+        - script.execute:
+            id: sypialnia
+            sn: "S05_L"
+            pt: "OP"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po prawej - Prawa Dol'
