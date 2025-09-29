@@ -201,11 +201,11 @@ light:
     output: out_10
     id: dont_use_01
   - platform: binary
-    name: 'Sypoialnia lozko prawa'
+    name: 'Sypialnia lozko prawa'
     output: out_11
     id: O07
   - platform: binary
-    name: 'Sypoialnia lozko lewa'
+    name: 'Sypialnia lozko lewa'
     output: out_12
     id: O06
   - platform: binary
@@ -299,9 +299,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_01
+    on_press:
+      then:
+        - logger.log: "S01_P OP -> Okno tarasowym - Prawa"
 
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Lewa'
@@ -312,9 +312,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_02
+    on_press:
+      then:
+        - logger.log: "S01_L OP -> Okno tarasowym - Prawa"
 
   - platform: gpio
     name: 'Salon przy wyspie A - Prawa'
@@ -342,9 +342,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_04
+    on_press:
+      then:
+        - logger.log: "S02A_L OP -> Przy wyspie A lewa"
 
   - platform: gpio
     name: 'Salon przy wyspie B - Prawa'
@@ -355,9 +355,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_05
+    on_press:
+      then:
+        - logger.log: "S02B_P OP -> Przy wyspie B prawa"
 
   - platform: gpio
     name: 'Salon przy wyspie B - Lewa'
@@ -368,9 +368,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_06
+    on_press:
+      then:
+        - logger.log: "S02B_L OP -> Przy wyspie B lewa"
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Prawa'
@@ -398,9 +398,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_08
+    on_press:
+      then:
+        - logger.log: "S03A_L OP -> Przy wejsciu A lewa"
 
   - platform: gpio
     name: 'Salon przy wejsciu B - Prawa'
@@ -411,9 +411,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_09
+    on_press:
+      then:
+        - logger.log: "S03B_P OP -> Przy wejsciu B prawy"
 
   - platform: gpio
     name: 'Salon przy wejsciu B - Lewa'
@@ -424,9 +424,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_10
+    on_press:
+      then:
+        - logger.log: "S03B_P OP -> Przy wejsciu B lewa"
 
   - platform: gpio
     name: 'Sypialnia przy oknie tarasowym - Prawa'
@@ -437,9 +437,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_11
+    on_press:
+      then:
+        - logger.log: "S04_P OP -> okno tarasowe prawa"
 
   - platform: gpio
     name: 'Sypialnia przy oknie tarasowym - Lewa'
@@ -450,9 +450,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_12
+    on_press:
+      then:
+        - logger.log: "S04_L OP -> okno tarasowe lewa"
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'
@@ -463,9 +463,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_13
+    on_press:
+      then:
+        - logger.log: "S05_P OP -> Przy wejsciu - prawa"
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Lewa'
@@ -478,14 +478,14 @@ binary_sensor:
       inverted: true
     on_press:
       then:
-        - logger.log: "S05_L OP -> Przy wejsciu - Lewa"
+        - logger.log: "S05_L OP -> Przy wejsciu lewa"
         - script.execute:
             id: sypialnia
             sn: "S05_L"
             pt: "OP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po prawej - Prawa Dol'
+    name: 'Sypialnia przy lozku po prawej - Prawa Dol'
     id: S06_PD
     pin:
       pcf8574: pcf_inputs_15to28
@@ -493,12 +493,12 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_15
+    on_press:
+      then:
+        - logger.log: "S06_PD OP -> prawa prawa dol"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po prawej - Prawa Gora'
+    name: 'Sypialnia przy lozku po prawej - Prawa Gora'
     id: S06_PG
     pin:
       pcf8574: pcf_inputs_15to28
@@ -506,9 +506,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_16
+    on_press:
+      then:
+        - logger.log: "S06_PG OP -> prawa prawa gora"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po prawej - Lewa Dol'
@@ -519,9 +519,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_17
+    on_press:
+      then:
+        - logger.log: "S06_LD OP -> prawa lewa dol"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po prawej - Lewa Gora'
@@ -532,9 +532,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_18
+    on_press:
+      then:
+        - logger.log: "S06_LG OP -> prawa lewa gora"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Prawa Dol'
@@ -545,9 +545,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_19
+    on_press:
+      then:
+        - logger.log: "S07_PD OP -> lewa prawa dol"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Prawa Gora'
@@ -558,9 +558,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_20
+    on_press:
+      then:
+        - logger.log: "S07_PG OP -> lewa prawa gora"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Lewa Dol'
@@ -571,9 +571,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_21
+    on_press:
+      then:
+        - logger.log: "S07_LD OP -> lewa lewa dol"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Lewa Gora'
@@ -584,9 +584,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_22
+    on_press:
+      then:
+        - logger.log: "S07_LG OP -> lewa lewa gora"
 
   - platform: gpio
     name: 'Lazienka przy lustrze - Prawa'
@@ -597,9 +597,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_23
+    on_press:
+      then:
+        - logger.log: "S08_P OP -> lustro prawa"
 
   - platform: gpio
     name: 'Lazienka przy lustrze - Lewa'
@@ -610,9 +610,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_24
+    on_press:
+      then:
+        - logger.log: "S08_L OP -> lustro lewa"
 
   - platform: gpio
     name: 'Wejscie do lazienki - Gora'
@@ -640,9 +640,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_26
+    on_press:
+      then:
+        - logger.log: "S09_D OP -> Wejscie dol"
 
   - platform: gpio
     name: 'Przedpokuj wejscie do sypialni/salonu'
@@ -653,9 +653,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_27
+    on_press:
+      then:
+        - logger.log: "S10 OP -> przedpokoj sypialnia/salon"
 
   - platform: gpio
     name: 'Przedpokuj wejscie do domu - Prawa'
@@ -666,9 +666,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_28
+    on_press:
+      then:
+        - logger.log: "S11_P OP -> przedpokoj wejscie prawa"
 
   - platform: gpio
     name: 'Przedpokuj wejscie do domu - Lewa'
@@ -679,9 +679,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_29
+    on_press:
+      then:
+        - logger.log: "S11_L OP -> przedpokoj wejscie lewa"
 
   - platform: gpio
     name: 'Gabinet - Prawa'
@@ -692,9 +692,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_30
+    on_press:
+      then:
+        - logger.log: "S12_P OP -> gabinet prawa"
 
   - platform: gpio
     name: 'Gabinet - Lewa'
@@ -707,7 +707,7 @@ binary_sensor:
       inverted: true
     on_press:
       then:
-        - logger.log: "S12_L OP -> Gabinet Lewa"
+        - logger.log: "S12_L OP -> gabinet Lewa"
         - script.execute:
             id: gabinet
             sn: "S12_L"
@@ -722,9 +722,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_32
+    on_press:
+      then:
+        - logger.log: "CO_1 OP -> czujnik obecnosci 1"
 
   - platform: gpio
     name: 'Czujnik obecnosci 2'
@@ -735,6 +735,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
+    on_press:
+      then:
+        - logger.log: "CO_2 OP -> czujnik obecnosci 2"
 
   - platform: gpio
     name: 'Czujnik zmierzchowy'
@@ -745,6 +748,9 @@ binary_sensor:
       mode:
         input: true
       inverted: true
+    on_press:
+      then:
+        - logger.log: "CZ OP -> czujnik zmierzchu"
 
   - platform: gpio
     name: 'IN_35'
