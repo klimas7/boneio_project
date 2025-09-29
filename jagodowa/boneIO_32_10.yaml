@@ -131,6 +131,7 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
+          id(O08).toggle().perform();
 
   - id: gabinet
     parameters:
@@ -139,6 +140,7 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
+          id(O10).toggle().perform();
 
   - id: przedpokuj
     parameters:
@@ -155,6 +157,7 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
+          id(O09).toggle().perform();
 
 light:
   - platform: binary
@@ -620,9 +623,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_25
+    on_press:
+      then:
+        - logger.log: "S09_G OP -> Wejscie gora"
+        - script.execute:
+            id: lazienka
+            sn: "S09_L"
+            pt: "OP"
 
   - platform: gpio
     name: 'Wejscie do lazienki - Dol'
@@ -698,9 +705,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-#    on_press:
-#      then:
-#        - light.toggle: light_31
+    on_press:
+      then:
+        - logger.log: "S12_L OP -> Gabinet Lewa"
+        - script.execute:
+            id: gabinet
+            sn: "S12_L"
+            pt: "OP"
 
   - platform: gpio
     name: 'Czujnik obecnosci 1'

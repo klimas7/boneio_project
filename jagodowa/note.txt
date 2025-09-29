@@ -2,3 +2,10 @@ D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104       //TODO check mac
 D8-13-2A-7D-86-E0   192.168.18.32   boneio-dr-8ch-03-7d86e0     //TODO check mac address
 
 D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac address a d ip address
+
+//TODO Pierwsz faza
+- [D] Swiatlo w salonie
+- [D] Swiatlo w sypiali
+- [D] Swiatlo w gabinecie
+- [D] Swiatlo w lazience
+- [] Swiatlo w przedpokoju
