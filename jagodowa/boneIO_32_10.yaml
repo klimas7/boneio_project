@@ -1,6 +1,6 @@
 substitutions:
-  name: boneio-32-l-07-39d104
-  friendly_name: 'BoneIO ESP 32x10 Lights 39d104'
+  name: boneio-32-l-07-73be28
+  friendly_name: 'BoneIO ESP 32x10 Lights 73be28'
   serial_prefix: 'esp' #Don't change it.
 
 esphome:
@@ -54,7 +54,7 @@ packet_transport:
       - CO_2   #Przedpokuj dl_01
       - CZ     #All dl_01 & dl_02
     providers:
-      - name: boneio-dr-8ch-03-7d86e0
+      - name: boneio-dr-8ch-03-30f8d8
         encryption: 'JAG_BONEIO2_KEY' #set it to yours shared secret key
       - name: boneio-dr-8ch-03-7c8500
         encryption: 'JAG_BONEIO3_KEY' #set it to yours shared secret key
