@@ -147,7 +147,7 @@ binary_sensor:
         - script.execute:
             id: przedpokuj
             sn: "S09_D"
-            pt: "S09_D"
+            pt: "OP"
 
 #  - platform: gpio
 #    name: 'IN_01'

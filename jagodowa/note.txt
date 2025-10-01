@@ -8,4 +8,4 @@ D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac
 - [D] Swiatlo w sypiali
 - [D] Swiatlo w gabinecie
 - [D] Swiatlo w lazience
-- [] Swiatlo w przedpokoju S10 & S11_L & S09_D -> (L09A L09B L10A L10B) toggle
+- [D] Swiatlo w przedpokoju S10 & S11_L & S09_D -> (L09A L09B L10A L10B) toggle
