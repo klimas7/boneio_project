@@ -127,14 +127,14 @@ binary_sensor:
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
-    id: remote_S11_L
-    remote_id: S11_L
+    id: remote_S11_P
+    remote_id: S11_P
     on_press:
       then:
-        - logger.log: "R S11_L OP -> przedpokoj sypialnia/salon"
+        - logger.log: "R S11_P OP -> przedpokoj sypialnia/salon"
         - script.execute:
             id: przedpokuj
-            sn: "S11_L"
+            sn: "S11_P"
             pt: "OP"
   - platform: packet_transport
     transport_id: transport
