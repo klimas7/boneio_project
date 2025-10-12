@@ -127,14 +127,14 @@ binary_sensor:
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-73be28
-    id: remote_S11_L
-    remote_id: S11_L
+    id: remote_S11_P
+    remote_id: S11_P
     on_press:
       then:
-        - logger.log: "R S11_L OP -> przedpokoj sypialnia/salon"
+        - logger.log: "R S11_P OP -> przedpokoj sypialnia/salon"
         - script.execute:
             id: przedpokuj
-            sn: "S11_L"
+            sn: "S11_P"
             pt: "OP"
   - platform: packet_transport
     transport_id: transport
@@ -453,51 +453,51 @@ binary_sensor:
 light:
   - platform: monochromatic
     output: chl01
-    name: 'LO9A'
-    id: L09A
-    default_transition_length: 2s
-    gamma_correct: 0
-  - platform: monochromatic
-    output: chl02
-    name: 'L09B'
-    id: L09B
-    default_transition_length: 2s
-    gamma_correct: 0
-  - platform: monochromatic
-    output: chl03
-    name: 'L10A'
-    id: L10A
-    default_transition_length: 2s
-    gamma_correct: 0
-  - platform: monochromatic
-    output: chl04
-    name: 'L10B'
-    id: L10B
-    default_transition_length: 2s
-    gamma_correct: 0
-
-  - platform: monochromatic
-    output: chr01
-    name: 'L11'
-    id: L11
-    default_transition_length: 2s
-    gamma_correct: 0
-  - platform: monochromatic
-    output: chr02
-    name: 'L12'
-    id: L12
-    default_transition_length: 2s
-    gamma_correct: 0
-  - platform: monochromatic
-    output: chr03
     name: 'L03'
     id: L03
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
-    output: chr04
+    output: chl02
     name: 'L04'
     id: L04
+    default_transition_length: 2s
+    gamma_correct: 0
+  - platform: monochromatic
+    output: chl03
+    name: 'L11'
+    id: L11
+    default_transition_length: 2s
+    gamma_correct: 0
+  - platform: monochromatic
+    output: chl04
+    name: 'L12'
+    id: L12
+    default_transition_length: 2s
+    gamma_correct: 0
+
+  - platform: monochromatic
+    output: chr01
+    name: 'L09A'
+    id: L09A
+    default_transition_length: 2s
+    gamma_correct: 0
+  - platform: monochromatic
+    output: chr02
+    name: 'L09B'
+    id: L09B
+    default_transition_length: 2s
+    gamma_correct: 0
+  - platform: monochromatic
+    output: chr03
+    name: 'L10A'
+    id: L10A
+    default_transition_length: 2s
+    gamma_correct: 0
+  - platform: monochromatic
+    output: chr04
+    name: 'L10B'
+    id: L10B
     default_transition_length: 2s
     gamma_correct: 0
 

@@ -122,7 +122,9 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
+          id(O01_A).toggle().perform();
           id(O02_A).toggle().perform();
+          id(O03_A).toggle().perform();
 
   - id: sypialnia
     parameters:
