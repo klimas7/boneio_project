@@ -113,6 +113,13 @@ time:
     servers:
       - ntp1.tp.pl
       - ntp2.tp.pl
+    on_time:
+      seconds: 0
+      minutes: 0
+      hours: 23
+      then:
+        - logger.log: "Godzina 23:00"
+        - light.turn_off: O01_A
 
 script:
   - id: salon
@@ -743,16 +750,38 @@ binary_sensor:
 
   - platform: gpio
     name: 'Czujnik zmierzchowy'
-    id: CZ
+    id: CZ #IN_34
     pin:
       pcf8574: pcf_inputs_28to35_menu
       number: 5
       mode:
         input: true
       inverted: true
+    filters:
+      - delayed_on:
+          seconds: 30
     on_press:
       then:
         - logger.log: "CZ OP -> czujnik zmierzchu"
+        - if:
+            condition:
+              lambda: |-
+                ESP_LOGI("in condition", "%s", "_1_");
+                auto t = id(sntp_time).now();
+                if (!t.is_valid()) {
+                  ESP_LOGI("in condition", "%s", "_2_");
+                  return false;
+                }
+                int h = t.hour;
+                int m = t.minute;
+                ESP_LOGI("in condition", "%s %d %d", "_3_", h, m);
+                return (h >= 15 && h < 23);
+            then:
+              - light.turn_on: O01_A
+    on_release:
+      then:
+        - logger.log: "CZ OR -> czujnik zmierzchu"
+        - light.turn_off: O01_A
 
   - platform: gpio
     name: 'IN_35'
