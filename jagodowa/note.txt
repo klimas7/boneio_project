@@ -15,3 +15,6 @@ D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac
     - [D] O05, O04, O11 Powinny sie wyłączyć o 22:00
     - [D] Załanczanie o zmierzchu powinno być opóźnione o 1 minute
 - [D] Światło przed wejściem O12 włanczane S11_L
+
+[22.10.2025]
+- [D] Czujnik zmierzchu obsługa przy starcie systemu
