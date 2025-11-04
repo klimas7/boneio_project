@@ -10,12 +10,6 @@ esphome:
   project:
     name: boneio.32x10-lights
     version: '0.7'
-  on_boot:
-    priority: -900.0
-    then:
-      - delay: 30s
-      - logger.log: "On boot"
-      - script.execute: check_and_turn_on_the_outside_light
 
 esp32:
   board: nodemcu-32s
@@ -70,13 +64,12 @@ dashboard_import:
   import_full_config: true
 
 packages:
-  internals_packages:
+  internals_packages_boneIO_eu:
     url: https://github.com/boneIO-eu/esphome
     ref: v1.7.1
     files: [
       'devices/buzzer.yaml',
       'devices/serial_no.yaml',
-      'devices_v0_7/display.yaml',
       'devices_v0_7/i2c.yaml',
       'devices_v0_7-v0_9/ina219.yaml',
       'devices_v0_7-v0_9/lm75b.yaml',
@@ -97,8 +90,11 @@ packages:
       'boards/output/out27_28.yaml',
       'boards/output/out29_30.yaml',
       'boards/output/out31_32.yaml',
-      # 'devices_v0_7-v0_9/one_wire.yaml',
     ]
+  internals_packages_klimas7:
+    url: https://github.com/klimas7/esphome
+    ref: v1.8.3
+    files: [ time.yaml, display.yaml ]
 
 logger:
 api:
@@ -116,15 +112,7 @@ web_server:
   version: 3
 
 time:
-  - platform: sntp
-    id: sntp_time
-    timezone: Europe/Warsaw
-    servers:
-      - ntp1.tp.pl
-      - ntp2.tp.pl
-    on_time_sync:
-      then:
-        - logger.log: "Zegar zostal zsynchronizowany"
+  - id: !extend ds1307_time
     on_time:
       seconds: 0
       minutes: 0
@@ -136,32 +124,32 @@ time:
         - light.turn_off: O11
 
 script:
-  - id: check_and_turn_on_the_outside_light
+  - id: !extend on_boot_time_check
     then:
       - lambda: |-
-          ESP_LOGI("check_and_turn_on_the_outside_light", "%s", "_1_");
-          auto t = id(sntp_time).now();
-          if (!t.is_valid()) {
-            ESP_LOGI("check_and_turn_on_the_outside_light", "%s", "zegar jest nie synchronizowany");
+          ESP_LOGI("extended_on_boot_time_check", "%s", "_1_");
+          auto time = id(ds1307_time).now();
+          if (!time.is_valid()) {
+            ESP_LOGI("extended_on_boot_time_check", "%s", "zegar jest nie synchronizowany");
             if (id(CZ).state) {
               id(O04).turn_on().perform();
               id(O05).turn_on().perform();
               id(O11).turn_on().perform();
-              ESP_LOGI("check_and_turn_on_the_outside_light", "%s", "light on mimo niesynchronizowania zegara");
+              ESP_LOGI("extended_on_boot_time_check", "%s", "light on mimo niesynchronizowania zegara");
             }
             return;
           }
           
-          int h = t.hour;
-          int m = t.minute;
-          ESP_LOGI("check_and_turn_on_the_outside_light", "%s %d %d", "_3_", h, m);
-          if (h >= 14 && h < 22 && id(CZ).state) {
+          int h = time.hour;
+          int m = time.minute;
+          ESP_LOGI("extended_on_boot_time_check", "%s %d %d", "_3_", h, m);
+          if (h >= 12 && h < 22 && id(CZ).state) {
             id(O04).turn_on().perform();
             id(O05).turn_on().perform();
             id(O11).turn_on().perform();
-            ESP_LOGI("check_and_turn_on_the_outside_light", "%s", "light on");
+            ESP_LOGI("extended_on_boot_time_check", "%s", "light on");
           } else {
-            ESP_LOGI("check_and_turn_on_the_outside_light", "%s", "light no change");
+            ESP_LOGI("extended_on_boot_time_check", "%s", "light no change");
           }
 
 
@@ -801,20 +789,30 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    filters:
-      - delayed_on:
-          seconds: 10
     on_press:
       then:
         - logger.log: "CZ OP -> czujnik zmierzchu"
-        - script.execute: check_and_turn_on_the_outside_light
+        - script.execute: on_boot_time_check
+        - lambda: |-
+            auto time = id(ds1307_time).now();
+            if (time.is_valid()) {
+              char buffer[9];
+              sprintf(buffer, "%02d:%02d:%02d", time.hour, time.minute, time.second);
+              id(cz_last_on).publish_state(buffer);
+            }
     on_release:
       then:
         - logger.log: "CZ OR -> czujnik zmierzchu"
         - light.turn_off: O05
         - light.turn_off: O04
         - light.turn_off: O11
-
+        - lambda: |-
+            auto time = id(ds1307_time).now();
+            if (time.is_valid()) {
+              char buffer[9];
+              sprintf(buffer, "%02d:%02d:%02d", time.hour, time.minute, time.second);
+              id(cz_last_off).publish_state(buffer);
+            }
 
   - platform: gpio
     name: 'IN_35'
