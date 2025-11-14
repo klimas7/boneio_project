@@ -18,3 +18,10 @@ D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac
 
 [22.10.2025]
 - [D] Czujnik zmierzchu obsługa przy starcie systemu
+
+[14.11.2025]
+- Ledy w salonie dl_02 L01A, L01B, L02 sterowane S02B_P, S03B_P
+
+    - SP -> L01:1;L2:0 -> SP -> L01:0;L02:1 -> SP -> L01:1; L02:1 -> SP ->
+                       |                    |                     |
+                       |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
