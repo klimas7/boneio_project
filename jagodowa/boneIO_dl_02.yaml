@@ -70,6 +70,15 @@ ota:
 web_server:
   port: 80
   local: true
+  version: 3
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Europe/Warsaw
+    servers:
+      - ntp1.tp.pl
+      - ntp2.tp.pl
 
 text_sensor:
   - platform: version
@@ -88,356 +97,158 @@ text_sensor:
       return id(eth).get_use_address();
     update_interval: 5min
 
+script:
+  - id: salon
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
+          
+          // - SP -> L01:1;L2:0 -> SP -> L01:0;L02:1 -> SP -> L01:1; L02:1 -> SP ->
+          //     |                    |                     |
+          //     |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
+          //
+          
+          if (pt == "LP") {
+            id(L01A).turn_off().perform();
+            id(L01B).turn_off().perform();
+            id(L02).turn_off().perform();
+            return;
+          }
+
+          // handle SP
+          auto isOnL01 = id(L01A).current_values.is_on() || id(L01B).current_values.is_on();
+          auto isOnL02 = id(L02).current_values.is_on();
+
+          if ((!isOnL01 && !isOnL02) || (isOnL01 && isOnL02)) {
+            id(L01A).turn_on().perform();
+            id(L01B).turn_on().perform();
+            id(L02).turn_off().perform();
+          }
+
+          if (isOnL01 && !isOnL02) {
+            id(L01A).turn_off().perform();
+            id(L01B).turn_off().perform();
+            id(L02).turn_on().perform();
+          }
+
+          if (!isOnL01 && isOnL02) {
+            id(L01A).turn_on().perform();
+            id(L01B).turn_on().perform();
+            id(L02).turn_on().perform();
+          }
+
+  - id: lazienka
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
+
 binary_sensor:
-  - platform: gpio
-    name: 'IN_01'
-    id: in_01
-    pin:
-      pcf8574: pcf_inputs
-      number: 1
-      mode:
-        input: true
-      inverted: true
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_S02B_P
+    remote_id: S02B_P
+    type: data
     on_multi_click:
-      - timing:
-          - ON for at least 0.7s
+      - timing: #Long push
+          - ON for at least 1s #Press more then 1s
         then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_01
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chl_01).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chl_01
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chl_01
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
+          - logger.log: "S02B_P LP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S02B_P"
+              pt: "LP"
+      - timing: #Short push
+          - ON for at most 1s   # Press less then 1 sek.
+          - OFF for at least 0.5s # Release more then sek.
         then:
-          light.toggle: chl_01
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_02'
-    id: in_02
-    pin:
-      pcf8574: pcf_inputs
-      number: 2
-      mode:
-        input: true
-      inverted: true
+          - logger.log: "S02B_P SP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S02B_P"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_S03B_P
+    remote_id: S03B_P
+    type: data
     on_multi_click:
-      - timing:
-          - ON for at least 0.7s
+      - timing: #Long push
+          - ON for at least 1s #Press more then 1s
         then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_02
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chl_02).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chl_02
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chl_02
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
+          - logger.log: "S03B_P LP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S03B_P"
+              pt: "LP"
+      - timing: #Short push
+          - ON for at most 1s   # Press less then 1 sek.
+          - OFF for at least 0.5s # Release more then sek.
         then:
-          light.toggle: chl_02
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_03'
-    id: in_03
-    pin:
-      pcf8574: pcf_inputs
-      number: 3
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_03
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chl_03).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chl_03
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chl_03
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chl_03
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_04'
-    id: in_04
-    pin:
-      pcf8574: pcf_inputs
-      number: 4
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_04
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chl_04).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chl_04
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chl_04
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chl_04
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_05'
-    id: in_05
-    pin:
-      number: 36
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_05
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chr_01).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chr_01
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chr_01
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chr_01
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_06'
-    id: in_06
-    pin:
-      number: 39
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_06
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chr_02).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chr_02
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chr_02
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chr_02
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_07'
-    id: in_07
-    pin:
-      number: 34
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_07
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chr_03).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chr_03
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chr_03
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chr_03
-        invalid_cooldown: 0.5s
-  - platform: gpio
-    name: 'IN_08'
-    id: in_08
-    pin:
-      number: 35
-      mode:
-        input: true
-      inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 0.7s
-        then:
-          - while:
-              condition:
-                binary_sensor.is_on: in_08
-              then:
-                - if:
-                    condition:
-                      lambda: 'return id(chr_04).current_values.get_brightness() >= 0.90f;'
-                    then:
-                      - light.turn_on:
-                          id: chr_04
-                          brightness: 5%
-                          transition_length: 0.2s
-                    else:
-                      - light.dim_relative:
-                          id: chr_04
-                          relative_brightness: 5%
-                          transition_length: 0.2s
-                - delay: 200ms
-        invalid_cooldown: 0.5s
-      - timing: #single click
-          - ON for at most 0.4s
-          - OFF for at least 0.1s
-        then:
-          light.toggle: chr_04
-        invalid_cooldown: 0.5s
+          - logger.log: "S03B_P SP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S03B_P"
+              pt: "SP"
 
 light:
+  # Lazienka
   - platform: monochromatic
     output: chl01
-    name: 'CHL 01'
-    id: chl_01
+    name: 'L05 - Lazienka wanna'
+    id: L05
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl02
-    name: 'CHL 02'
-    id: chl_02
+    name: 'L06 - Lazienka prysznic'
+    id: L06
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl03
-    name: 'CHL 03'
-    id: chl_03
+    name: 'L07 - Lazienka szafka/lustro'
+    id: L07
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl04
-    name: 'CHL 04'
-    id: chl_04
+    name: 'L08 - Lazienka wc'
+    id: L08
     default_transition_length: 2s
     gamma_correct: 0
 
+  # Salon
   - platform: monochromatic
     output: chr01
-    name: 'CHR 01'
-    id: chr_01
+    name: 'L01A - Salon blenda prawa strona'
+    id: L01A
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chr02
-    name: 'CHR 02'
-    id: chr_02
+    name: 'L01B - Salon blenda lewa strona'
+    id: L01B
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chr03
-    name: 'CHR 03'
-    id: chr_03
+    name: 'L02 - Salon TV'
+    id: L02
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chr04
-    name: 'CHR 04'
-    id: chr_04
+    name: 'X - Nie uzywane'
+    id: L_not_use
     default_transition_length: 2s
     gamma_correct: 0
 
