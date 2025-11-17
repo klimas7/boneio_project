@@ -151,7 +151,7 @@ script:
 binary_sensor:
   - platform: packet_transport
     transport_id: transport
-    provider: boneio-32-l-07-73be28
+    provider: boneio-32-l-07-39d104
     id: remote_S02B_P
     remote_id: S02B_P
     type: data
@@ -176,7 +176,7 @@ binary_sensor:
 
   - platform: packet_transport
     transport_id: transport
-    provider: boneio-32-l-07-73be28
+    provider: boneio-32-l-07-39d104
     id: remote_S03B_P
     remote_id: S03B_P
     type: data
