@@ -1,5 +1,5 @@
-D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104       //TODO check mac address
-D8-13-2A-7D-86-E0   192.168.18.32   boneio-dr-8ch-03-7d86e0     //TODO check mac address
+D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104
+D8-13-2A-7D-86-E0   192.168.18.32   boneio-dr-8ch-03-7d86e0
 
 D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac address a d ip address
 
@@ -20,8 +20,26 @@ D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac
 - [D] Czujnik zmierzchu obsługa przy starcie systemu
 
 [14.11.2025]
-- Ledy w salonie dl_02 L01A, L01B, L02 sterowane S02B_P, S03B_P
+- [D] Ledy w salonie dl_02 L01A, L01B, L02 sterowane S02B_P, S03B_P
 
     - SP -> L01:1;L2:0 -> SP -> L01:0;L02:1 -> SP -> L01:1; L02:1 -> SP ->
                        |                    |                     |
                        |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
+
+[X.12.2025]
+- Gabinet
+    - Główne światło O10 sterowane S12_P
+    - Ledy L12 (blenda) L11 półka sterowane S12_L
+
+- Salon
+    - Oświetlenie kuchnia    O03A i O03B sterowane S02A_L, S03A_L
+    - Oświetlenie jadalnia   O02A i O02B sterowane S02A_P, S03A_P
+    - Oświetlenie wypoczynek O01A i O01B sterowane S02B_L, S03B_L
+
+- Sypialnia
+
+- Łazienka
+    - [D] Oświetlenie główne O09 jest sterowane S09_G
+    - Ledy L07 (lustro) L08 (WC) sterowane z S09_G
+    - Oswietlenie O09 sterowane S08_P
+    - Ledy L05 (wanna) L06 (prysznic) sterowane S08_L
