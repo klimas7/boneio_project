@@ -110,6 +110,40 @@ script:
           id(L09B).toggle().perform();
           id(L10A).toggle().perform();
           id(L10B).toggle().perform();
+  - id: test
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("test", "%s %s", sn.c_str(), pt.c_str());
+          
+          // L03 -> L1
+          // L04 -> L2
+          
+          if ((sn == "TS3_A" && pt == "LP") || pt == "VLP") {
+            id(L03).turn_off().perform();
+            id(L04).turn_off().perform();
+          }
+          
+          if (sn == "TS3_A" && pt == "SP") {
+            auto isOnL03 = id(L03).current_values.is_on();
+            auto isOnL04 = id(L04).current_values.is_on();
+            if ((!isOnL03 && !isOnL04) || (isOnL03 && isOnL04)) {
+              id(L03).turn_on().perform();
+              id(L04).turn_off().perform();
+            }
+          
+            if (isOnL03 && !isOnL04) {
+              id(L03).turn_off().perform();
+              id(L04).turn_on().perform();
+            }
+          
+            if (!isOnL03 && isOnL04) {
+              id(L03).turn_on().perform();
+              id(L04).turn_on().perform();
+            }
+          }
 
 binary_sensor:
   - platform: packet_transport
@@ -148,6 +182,54 @@ binary_sensor:
             id: przedpokuj
             sn: "S09_D"
             pt: "OP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_TS3_A
+    remote_id: TS3_A
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "TS3_A VLP"
+          - script.execute:
+              id: test
+              sn: "TS3_A"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "TS3_A LP"
+          - script.execute:
+              id: test
+              sn: "TS3_A"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "TS3_A SP"
+          - script.execute:
+              id: test
+              sn: "TS3_A"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-73be28
+    id: remote_TS3_B
+    remote_id: TS3_B
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "TS3_B VLP"
+          - script.execute:
+              id: test
+              sn: "TS3_B"
+              pt: "VLP"
 
 #  - platform: gpio
 #    name: 'IN_01'

@@ -36,8 +36,11 @@ packet_transport:
     encryption: 'JAG_BONEIO1_KEY' #set it to yours shared secret key
     rolling_code_enable: true
     binary_sensors:
+      - TS3_A
+      - TS3_B
+      - TS3_C
+      - TS3_D
       - S02B_P #L01 & L02 Salon dl_02
-      - S03B_P #L01 & L02 Salon dl_02
       - S05_P  #L03 & L04 Sypialnia dl_01
       - S06_PG #L03 & L04 Sypialnia dl_01
       - S06_PD #L03 & L04 Sypialnia dl_01
@@ -193,6 +196,43 @@ script:
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
           id(O09).toggle().perform();
 
+  - id: test
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("test", "%s %s", sn.c_str(), pt.c_str());
+          
+          // O01_A -> O1
+          // O01_B -> O2
+          
+          if ((sn == "TS3_B" && pt == "LP") || pt == "VLP") {
+            id(O01_A).turn_off().perform();
+            id(O01_B).turn_off().perform();
+          }
+          
+          if (sn == "TS3_B" && pt == "SP") {
+            auto isOnLO1 = id(O01_A).current_values.is_on();
+            auto isOnLO2 = id(O01_B).current_values.is_on();
+            if ((!isOnLO1 && !isOnLO2) || (isOnLO1 && isOnLO2)) {
+              id(O01_A).turn_on().perform();
+              id(O01_B).turn_off().perform();
+            }
+          
+            if (isOnLO1 && !isOnLO2) {
+              id(O01_A).turn_off().perform();
+              id(O01_B).turn_on().perform();
+            }
+          
+            if (!isOnLO1 && isOnLO2) {
+              id(O01_A).turn_on().perform();
+              id(O01_B).turn_on().perform();
+            }
+          }
+          
+          
+
 light:
   - platform: binary
     name: 'Salon/Wypoczynek A'
@@ -326,7 +366,7 @@ light:
 binary_sensor:
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Prawa'
-    id: S01_P
+    id: S01_P #IN_01
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
@@ -339,7 +379,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Lewa'
-    id: S01_L
+    id: S01_L #IN_02
     pin:
       pcf8574: pcf_inputs_1to14
       number: 1
@@ -352,7 +392,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy wyspie A - Prawa'
-    id: S02A_P
+    id: S02A_P #IN_03
     pin:
       pcf8574: pcf_inputs_1to14
       number: 2
@@ -372,7 +412,7 @@ binary_sensor:
     id: S02A_L
     pin:
       pcf8574: pcf_inputs_1to14
-      number: 3
+      number: 3 #IN_04
       mode:
         input: true
       inverted: true
@@ -382,7 +422,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy wyspie B - Prawa'
-    id: S02B_P
+    id: S02B_P #IN_05
     pin:
       pcf8574: pcf_inputs_1to14
       number: 4
@@ -395,7 +435,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy wyspie B - Lewa'
-    id: S02B_L
+    id: S02B_L #IN_06
     pin:
       pcf8574: pcf_inputs_1to14
       number: 5
@@ -408,7 +448,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Prawa'
-    id: S03A_P
+    id: S03A_P #IN_07
     pin:
       pcf8574: pcf_inputs_1to14
       number: 6
@@ -425,7 +465,7 @@ binary_sensor:
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Lewa'
-    id: S03A_L
+    id: S03A_L #IN_08
     pin:
       pcf8574: pcf_inputs_1to14
       number: 8
@@ -435,36 +475,64 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S03A_L OP -> Przy wejsciu A lewa"
-
+######## TEST #######
   - platform: gpio
-    name: 'Salon przy wejsciu B - Prawa'
-    id: S03B_P
+    name: 'Test S3/A'
+    id: TS3_A #IN_09
     pin:
       pcf8574: pcf_inputs_1to14
       number: 9
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03B_P OP -> Przy wejsciu B prawy"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "TS3_A VLP"
+          - script.execute:
+              id: test
+              sn: "TS3_A"
+              pt: "VLP"
 
   - platform: gpio
-    name: 'Salon przy wejsciu B - Lewa'
-    id: S03B_L
+    name: 'Test S3/B'
+    id: TS3_B #IN_10
     pin:
       pcf8574: pcf_inputs_1to14
       number: 10
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03B_P OP -> Przy wejsciu B lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "TS3_B VLP"
+          - script.execute:
+              id: test
+              sn: "TS3_B"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "TS3_B LP"
+          - script.execute:
+              id: test
+              sn: "TS3_B"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "TS3_B SP"
+          - script.execute:
+              id: test
+              sn: "TS3_B"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy oknie tarasowym - Prawa'
-    id: S04_P
+    name: 'Test S3/C'
+    id: TS3_C #IN_11
     pin:
       pcf8574: pcf_inputs_1to14
       number: 11
@@ -473,11 +541,11 @@ binary_sensor:
       inverted: true
     on_press:
       then:
-        - logger.log: "S04_P OP -> okno tarasowe prawa"
+        - logger.log: "Test S3/C"
 
   - platform: gpio
-    name: 'Sypialnia przy oknie tarasowym - Lewa'
-    id: S04_L
+    name: 'Test S3/D'
+    id: TS3_D #IN_12
     pin:
       pcf8574: pcf_inputs_1to14
       number: 12
@@ -486,8 +554,9 @@ binary_sensor:
       inverted: true
     on_press:
       then:
-        - logger.log: "S04_L OP -> okno tarasowe lewa"
+        - logger.log: "Test S3/D"
 
+######## TEST #######
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'
     id: S05_P
