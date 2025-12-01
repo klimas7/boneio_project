@@ -111,33 +111,35 @@ script:
           //     |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
           //
           
-          if (pt == "LP") {
+          if (((sn == "S02B_P" || sn == "S03B_P") && pt == "LP") || pt == "VLP") {
             id(L01A).turn_off().perform();
             id(L01B).turn_off().perform();
             id(L02).turn_off().perform();
             return;
           }
-
+          
           // handle SP
-          auto isOnL01 = id(L01A).current_values.is_on() || id(L01B).current_values.is_on();
-          auto isOnL02 = id(L02).current_values.is_on();
+          if ((sn == "S02B_P" || sn == "S03B_P") && pt == "SP") {
+            auto isOnL01 = id(L01A).current_values.is_on() || id(L01B).current_values.is_on();
+            auto isOnL02 = id(L02).current_values.is_on();
 
-          if ((!isOnL01 && !isOnL02) || (isOnL01 && isOnL02)) {
-            id(L01A).turn_on().perform();
-            id(L01B).turn_on().perform();
-            id(L02).turn_off().perform();
-          }
+            if ((!isOnL01 && !isOnL02) || (isOnL01 && isOnL02)) {
+              id(L01A).turn_on().perform();
+              id(L01B).turn_on().perform();
+              id(L02).turn_off().perform();
+            }
 
-          if (isOnL01 && !isOnL02) {
-            id(L01A).turn_off().perform();
-            id(L01B).turn_off().perform();
-            id(L02).turn_on().perform();
-          }
+            if (isOnL01 && !isOnL02) {
+              id(L01A).turn_off().perform();
+              id(L01B).turn_off().perform();
+              id(L02).turn_on().perform();
+            }
 
-          if (!isOnL01 && isOnL02) {
-            id(L01A).turn_on().perform();
-            id(L01B).turn_on().perform();
-            id(L02).turn_on().perform();
+            if (!isOnL01 && isOnL02) {
+              id(L01A).turn_on().perform();
+              id(L01B).turn_on().perform();
+              id(L02).turn_on().perform();
+            }
           }
 
   - id: lazienka
@@ -156,8 +158,16 @@ binary_sensor:
     remote_id: S02B_P
     type: data
     on_multi_click:
+      - timing: #Very long push
+          - ON for at least 3s
+        then:
+          - logger.log: "S02B_P VLP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S02B_P"
+              pt: "VLP"
       - timing: #Long push
-          - ON for at least 1s #Press more then 1s
+          - ON for at least 1s
         then:
           - logger.log: "S02B_P LP -> salon/wyspa"
           - script.execute:
@@ -166,7 +176,6 @@ binary_sensor:
               pt: "LP"
       - timing: #Short push
           - ON for at most 1s   # Press less then 1 sek.
-          - OFF for at least 0.5s # Release more then sek.
         then:
           - logger.log: "S02B_P SP -> salon/wyspa"
           - script.execute:
@@ -181,6 +190,14 @@ binary_sensor:
     remote_id: S03B_P
     type: data
     on_multi_click:
+      - timing: #Very long push
+          - ON for at least 3s
+        then:
+          - logger.log: "S02B_P VLP -> salon/wyspa"
+          - script.execute:
+              id: salon
+              sn: "S03B_P"
+              pt: "VLP"
       - timing: #Long push
           - ON for at least 1s #Press more then 1s
         then:
@@ -191,7 +208,6 @@ binary_sensor:
               pt: "LP"
       - timing: #Short push
           - ON for at most 1s   # Press less then 1 sek.
-          - OFF for at least 0.5s # Release more then sek.
         then:
           - logger.log: "S03B_P SP -> salon/wyspa"
           - script.execute:

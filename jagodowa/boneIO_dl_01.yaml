@@ -99,17 +99,61 @@ text_sensor:
     update_interval: 5min
 
 script:
-  - id: przedpokuj
+  - id: przedpokoj
     parameters:
       sn: string #switch name
       pt: string #push type
     then:
       - lambda: |-
-          ESP_LOGI("przedpokuj", "%s %s", sn.c_str(), pt.c_str());
+          ESP_LOGI("przedpokoj", "%s %s", sn.c_str(), pt.c_str());
           id(L09A).toggle().perform();
           id(L09B).toggle().perform();
           id(L10A).toggle().perform();
           id(L10B).toggle().perform();
+  ###### GABINET #####
+  - id: gabinet
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
+          
+          // L11 -> led polka
+          // L12 -> led Blenda
+          
+          if ((sn == "S12_P" && pt = "LP") || pt == "VLP") {
+            id(L11).turn_off().perform();
+            id(L12).turn_off().perform();
+          }
+          
+          if (sn == "S12_P" && pt == "SP") {
+            auto isOnL11 = id(L11).current_values.is_on();
+            auto isOnL12 = id(L12).current_values.is_on();
+            if ((!isOnL11 && !isOnL12) || (isOnL11 && isOnL12)) {
+              id(L12).turn_on().perform();
+              id(L11).turn_off().perform();
+            }
+          
+            if (isOnL12 && !isOnL11) {
+              id(L12).turn_off().perform();
+              id(L11).turn_on().perform();
+            }
+          
+            if (!isOnL12 && isOnL11) {
+              id(L12).turn_on().perform();
+              id(L11).turn_on().perform();
+            }
+          }
+###### GABINET #####
+
+  - id: sypialnia
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
 
 binary_sensor:
   - platform: packet_transport
@@ -122,7 +166,7 @@ binary_sensor:
       then:
         - logger.log: "R S10 OP -> przedpokoj sypialnia/salon"
         - script.execute:
-            id: przedpokuj
+            id: przedpokoj
             sn: "S10"
             pt: "OP"
   - platform: packet_transport
@@ -135,7 +179,7 @@ binary_sensor:
       then:
         - logger.log: "R S11_P OP -> przedpokoj sypialnia/salon"
         - script.execute:
-            id: przedpokuj
+            id: przedpokoj
             sn: "S11_P"
             pt: "OP"
   - platform: packet_transport
@@ -148,9 +192,59 @@ binary_sensor:
       then:
         - logger.log: "R S09_D OP -> przedpokoj sypialnia/salon"
         - script.execute:
-            id: przedpokuj
+            id: przedpokoj
             sn: "S09_D"
             pt: "OP"
+###################################### GABINET ######################################
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S12_P
+    remote_id: S12_P
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S12_P VLP -> gabinet Prawa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_P"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+          - ON for at most 3s
+        then:
+          - logger.log: "S12_P LP -> gabinet Prawa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S12_P SP -> gabinet Prawa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_P"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S12_L
+    remote_id: S12_L
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S12_L VLP -> gabinet Lewa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_L"
+              pt: "VLP"
+###################################### GABINET ######################################
 
 light:
   - platform: monochromatic

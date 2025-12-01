@@ -46,12 +46,12 @@ packet_transport:
       - S08_P  #Lazienka  dl_02
       - S08_L  #Lazienka  dl_02
       - S09_G  #Lazienka  dl_02
-      - S09_D  #Przedpokuj dl_01
-      - S10    #Przedpokuj dl_01
-      - S11_P  #Przedpokuj dl_01
+      - S09_D  #Przedpokoj dl_01
+      - S10    #Przedpokoj dl_01
+      - S11_P  #Przedpokoj dl_01
       - S12_P  #Gabinet    dl_01
-      - CO_1   #Przedpokuj dl_01
-      - CO_2   #Przedpokuj dl_01
+      - CO_1   #Przedpokoj dl_01
+      - CO_2   #Przedpokoj dl_01
       - CZ     #All dl_01 & dl_02
     providers:
       - name: boneio-dr-8ch-03-7d86e0
@@ -173,6 +173,7 @@ script:
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
           id(O08).toggle().perform();
 
+###### GABINET #####
   - id: gabinet
     parameters:
       sn: string #switch name
@@ -180,15 +181,23 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
-          id(O10).toggle().perform();
+          
+          if ((sn == "S12_L" && pt = "LP") || pt == "VLP") {
+            id(O10).turn_off().perform();
+          }
+          
+          if (sn == "S12_L" && pt == "SP") {
+            id(O10).turn_on().perform();
+          }
+###### GABINET #####
 
-  - id: przedpokuj
+  - id: przedpokoj
     parameters:
       sn: string #switch name
       pt: string #push type
     then:
       - lambda: |-
-          ESP_LOGI("przedpokuj", "%s %s", sn.c_str(), pt.c_str());
+          ESP_LOGI("przedpokoj", "%s %s", sn.c_str(), pt.c_str());
 
   - id: lazienka
     parameters:
@@ -685,7 +694,7 @@ binary_sensor:
         - logger.log: "S09_D OP -> Wejscie dol"
 
   - platform: gpio
-    name: 'Przedpokuj wejscie do sypialni/salonu'
+    name: 'Przedpokoj wejscie do sypialni/salonu'
     id: S10
     pin:
       pcf8574: pcf_inputs_15to28
@@ -698,7 +707,7 @@ binary_sensor:
         - logger.log: "S10 OP -> przedpokoj sypialnia/salon"
 
   - platform: gpio
-    name: 'Przedpokuj wejscie do domu - Prawa'
+    name: 'Przedpokoj wejscie do domu - Prawa'
     id: S11_P
     pin:
       pcf8574: pcf_inputs_15to28
@@ -711,7 +720,7 @@ binary_sensor:
         - logger.log: "S11_P OP -> przedpokoj wejscie prawa"
 
   - platform: gpio
-    name: 'Przedpokuj wejscie do domu - Lewa'
+    name: 'Przedpokoj wejscie do domu - Lewa'
     id: S11_L
     pin:
       pcf8574: pcf_inputs_28to35_menu
@@ -724,6 +733,7 @@ binary_sensor:
         - logger.log: "S11_L OP -> przedpokoj wejscie lewa"
         - light.toggle: O12
 
+###################################### GABINET ######################################
   - platform: gpio
     name: 'Gabinet - Prawa'
     id: S12_P
@@ -733,9 +743,15 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S12_P OP -> gabinet prawa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S12_P VLP -> gabinet Prawa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_P"
+              pt: "VLP"
 
   - platform: gpio
     name: 'Gabinet - Lewa'
@@ -746,6 +762,33 @@ binary_sensor:
       mode:
         input: true
       inverted: true
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S12_L VLP -> gabinet Lewa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+          - ON for at most 3s
+        then:
+          - logger.log: "S12_L LP -> gabinet Lewa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S12_L SP -> gabinet Lewa"
+          - script.execute:
+              id: gabinet
+              sn: "S12_L"
+              pt: "SP"
+
     on_press:
       then:
         - logger.log: "S12_L OP -> gabinet Lewa"
@@ -753,6 +796,7 @@ binary_sensor:
             id: gabinet
             sn: "S12_L"
             pt: "OP"
+###################################### GABINET ######################################
 
   - platform: gpio
     name: 'Czujnik obecnosci 1'
