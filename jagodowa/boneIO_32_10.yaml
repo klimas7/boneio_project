@@ -119,7 +119,6 @@ time:
       hours: 22
       then:
         - logger.log: "Godzina 22:00"
-        - light.turn_off: O05
         - light.turn_off: O04
         - light.turn_off: O11
 
@@ -133,7 +132,6 @@ script:
             ESP_LOGI("extended_on_boot_time_check", "%s", "zegar jest nie synchronizowany");
             if (id(CZ).state) {
               id(O04).turn_on().perform();
-              id(O05).turn_on().perform();
               id(O11).turn_on().perform();
               ESP_LOGI("extended_on_boot_time_check", "%s", "light on mimo niesynchronizowania zegara");
             }
@@ -145,7 +143,6 @@ script:
           ESP_LOGI("extended_on_boot_time_check", "%s %d %d", "_3_", h, m);
           if (h >= 12 && h < 22 && id(CZ).state) {
             id(O04).turn_on().perform();
-            id(O05).turn_on().perform();
             id(O11).turn_on().perform();
             ESP_LOGI("extended_on_boot_time_check", "%s", "light on");
           } else {
@@ -207,6 +204,48 @@ script:
       - lambda: |-
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
           id(O09).toggle().perform();
+###### ZEWNATRZ ######
+  - id: zewnatrz
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("zewnatrz", "%s %s", sn.c_str(), pt.c_str());
+          
+          if (pt != "OP") {
+            return;
+          }
+          
+          if (sn == "S01_P" || sn == "S04_P") {
+            auto isOnGZ = id(GZ01).current_values.is_on() || id(GZ02).current_values.is_on() || id(GZ03).current_values.is_on();
+            if (isOnGZ) {
+              id(GZ01).turn_off().perform();
+              id(GZ02).turn_off().perform();
+              id(GZ03).turn_off().perform();
+            } else {
+              id(GZ01).turn_on().perform();
+              id(GZ02).turn_on().perform();
+              id(GZ03).turn_on().perform();
+            }
+          }
+          
+          if (sn == "S01_L" || sn == "S04_L") {
+            auto isOn = id(O04).current_values.is_on() && id(O11).current_values.is_on();
+            if (!isOn) {
+              id(O04).turn_on().perform();
+              id(O11).turn_on().perform();
+            } else {
+              auto time = id(ds1307_time).now();
+              int h = time.hour;
+              auto shouldBeOn = (h >= 12 && h < 22 && id(CZ).state);
+              if (!shouldBeOn) {
+                id(O04).turn_off().perform();
+                id(O11).turn_off().perform();
+              }
+            }
+          }
+###### ZEWNATRZ ######
 
 light:
   - platform: binary
@@ -234,17 +273,17 @@ light:
     output: out_06
     id: O03_B
   - platform: binary
-    name: 'Oswietlenie elewacja pole'
+    name: 'Oswietlenie elewacja pole, podbitka'
     output: out_07
     id: O04
   - platform: binary
-    name: 'Oswietlenie podbitka'
-    output: out_08
-    id: O05
-  - platform: binary
     name: 'Gniazdo zewnetrzne podbitka pole'
-    output: out_09
+    output: out_08
     id: GZ01
+  - platform: binary
+    name: 'Wentylator lazienka'
+    output: out_09
+    id: W01
   - platform: binary
     name: '_nieuzywane_01'
     output: out_10
@@ -339,9 +378,10 @@ light:
     id: dont_use_14
 
 binary_sensor:
+###### SALON ZEWNATRZ ######
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Prawa'
-    id: S01_P
+    id: S01_P #IN_01
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
@@ -351,10 +391,14 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S01_P OP -> Okno tarasowym - Prawa"
+        - script.execute:
+            id: zewnatrz
+            sn: "S01_P"
+            pt: "OP"
 
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Lewa'
-    id: S01_L
+    id: S01_L #IN_02
     pin:
       pcf8574: pcf_inputs_1to14
       number: 1
@@ -364,6 +408,49 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S01_L OP -> Okno tarasowym - Prawa"
+        - script.execute:
+            id: zewnatrz
+            sn: "S01_L"
+            pt: "OP"
+
+###### SALON ZEWNATRZ    ######
+###### SYPIALNIA ZEWNATRZ #####
+  - platform: gpio
+    name: 'Sypialnia przy oknie tarasowym - Prawa'
+    id: S04_P #IN_11
+    pin:
+      pcf8574: pcf_inputs_1to14
+      number: 11
+      mode:
+        input: true
+      inverted: true
+    on_press:
+      then:
+        - logger.log: "S04_P OP -> okno tarasowe prawa"
+        - script.execute:
+            id: zewnatrz
+            sn: "S04_P"
+            pt: "OP"
+
+  - platform: gpio
+    name: 'Sypialnia przy oknie tarasowym - Lewa'
+    id: S04_L #IN_12
+    pin:
+      pcf8574: pcf_inputs_1to14
+      number: 12
+      mode:
+        input: true
+      inverted: true
+    on_press:
+      then:
+        - logger.log: "S04_L OP -> okno tarasowe lewa"
+        - script.execute:
+            id: zewnatrz
+            sn: "S04_L"
+            pt: "OP"
+
+  ###### SYPIALNIA ZEWNATRZ #####
+
 
   - platform: gpio
     name: 'Salon przy wyspie A - Prawa'
@@ -476,32 +563,6 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S03B_P OP -> Przy wejsciu B lewa"
-
-  - platform: gpio
-    name: 'Sypialnia przy oknie tarasowym - Prawa'
-    id: S04_P
-    pin:
-      pcf8574: pcf_inputs_1to14
-      number: 11
-      mode:
-        input: true
-      inverted: true
-    on_press:
-      then:
-        - logger.log: "S04_P OP -> okno tarasowe prawa"
-
-  - platform: gpio
-    name: 'Sypialnia przy oknie tarasowym - Lewa'
-    id: S04_L
-    pin:
-      pcf8574: pcf_inputs_1to14
-      number: 12
-      mode:
-        input: true
-      inverted: true
-    on_press:
-      then:
-        - logger.log: "S04_L OP -> okno tarasowe lewa"
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'
@@ -861,7 +922,6 @@ binary_sensor:
     on_release:
       then:
         - logger.log: "CZ OR -> czujnik zmierzchu"
-        - light.turn_off: O05
         - light.turn_off: O04
         - light.turn_off: O11
         - lambda: |-

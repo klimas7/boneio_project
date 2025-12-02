@@ -26,20 +26,33 @@ D8-13-2A-7C-85-00   192.168.18.XXX   boneio-dr-8ch-03-7c8500    //TODO check mac
                        |                    |                     |
                        |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
 
-[X.12.2025]
-- Gabinet
-    - Główne światło O10 sterowane S12_P
-    - Ledy L12 (blenda) L11 półka sterowane S12_L
+[01.12.2025]
+- Gabinet                                                                                                            [D]
+  - Główne światło O10 sterowane S12_P                                                                               [D]
+  - Ledy L12 (blenda) L11 półka sterowane S12_L                                                                      [D]
 
-S12_L
-   * - SP  -> O10:1 ->  SP ->
-   * - LP  -> O10:0
-   * - VLP -> O10:0;L11:0;12:0
+S12_L                                                                                                                [D]
+   * - SP  -> O10:1 ->  SP ->                                                                                        [D]
+   * - LP  -> O10:0                                                                                                  [D]
+   * - VLP -> O10:0;L11:0;12:0                                                                                       [D]
 
-S12_P
-   L12:0;L11:0 -> SP  -> L12:1;L11:0 -> SP -> L12:0;L11:1 -> SP -> L12:1;L11:1 -> SP ->
-   *           -> LP  -> L12:0;L11:0
-   *           -> VLP -> O10:0;L12:0;L11:0
+S12_P                                                                                                                [D]
+   L12:0;L11:0 -> SP  -> L12:1;L11:0 -> SP -> L12:0;L11:1 -> SP -> L12:1;L11:1 -> SP ->                              [D]
+   *           -> LP  -> L12:0;L11:0                                                                                 [D]
+   *           -> VLP -> O10:0;L12:0;L11:0                                                                           [D]
+
+- Zewnatrz
+   Zmiany fizyczne do wykonania!
+   - W puszce na strychu spiac oświetlenie z elewacji i podbitki w jedno O04 + O05 -> O04
+   - W puszce na strychu dodać obwód na gniazdko w podbitce podpiete pod stare O05 będące teraz GZ01
+   - Spić ten obwód z obwodem wentylatora
+
+   - O05 -> GZ01                                                                                                     [D]
+   - S01_P i S04_P Włącza i wyłącza gniazda zewnetrzne (wszystkie) GZ01, GZ02, GZ03                                  [D]
+     - Jesli ktorekolwiek gniazdko wlaczone to wylacz jak wszystkie wylaczone to wlacz
+   - S01_L i S04_L Sterowanie oświetleniem zewnetrznym elewacja front/podbitka/wejscie do domu  O04 i O11            [D]
+     - Jeśli naciśniemy i obie były wyłączone, to włączamy.                                                          [D]
+     - Jeśli włączone to wyłączamy tylko wtedy gdy jest poza okienkiem dzialania oświetlenia                         [D]
 
 - Salon
     - Oświetlenie kuchnia    O03A i O03B sterowane S02A_L, S03A_L
