@@ -1,0 +1,44 @@
+on_multi_click:
+  - timing:
+      - ON for at least 3s
+    then:
+      - logger.log: "S02A_P VLP -> Przy wyspie A prawy"
+      - script.execute:
+          id: salon
+          sn: "S02A_P"
+          pt: "VLP"
+  - timing:
+      - ON for at least 1s
+    then:
+      - logger.log: "S02A_P LP -> Przy wyspie A prawy"
+      - script.execute:
+          id: salon
+          sn: "S02A_P"
+          pt: "LP"
+  - timing:
+      - ON for at most 1s
+    then:
+      - logger.log: "S02A_P SP -> Przy wyspie A prawy"
+      - script.execute:
+          id: salon
+          sn: "S02A_P"
+          pt: "SP"
+
+  if (sn == "S12_P" && pt == "SP") {
+  auto isOnL11 = id(L11).current_values.is_on();
+  auto isOnL12 = id(L12).current_values.is_on();
+  if ((!isOnL11 && !isOnL12) || (isOnL11 && isOnL12)) {
+  id(L12).turn_on().perform();
+  id(L11).turn_off().perform();
+  }
+
+  if (isOnL12 && !isOnL11) {
+  id(L12).turn_off().perform();
+  id(L11).turn_on().perform();
+  }
+
+  if (!isOnL12 && isOnL11) {
+  id(L12).turn_on().perform();
+  id(L11).turn_on().perform();
+  }
+}

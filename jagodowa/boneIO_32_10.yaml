@@ -149,7 +149,7 @@ script:
             ESP_LOGI("extended_on_boot_time_check", "%s", "light no change");
           }
 
-
+###### SALON ######
   - id: salon
     parameters:
       sn: string #switch name
@@ -157,10 +157,60 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
-          id(O01_A).toggle().perform();
-          id(O02_A).toggle().perform();
-          id(O03_A).toggle().perform();
+          
+          if (pt == "VLP") {
+            id(O01_A).turn_off().perform();
+            id(O01_B).turn_off().perform();
+            id(O02_A).turn_off().perform();
+            id(O02_B).turn_off().perform();
+            id(O03_A).turn_off().perform();
+            id(O03_B).turn_off().perform();
+            return;
+          }
+          
+          auto isKuchnia = (sn == "S02A_L" || sn == "S03A_L");
+          auto isJadalnia = (sn == "S02A_P" || sn == "S03A_P");
+          auto isWypoczynek = (sn == "S02B_L" || sn == "S03B_L");
+          
+          light::LightState *lA = nullptr;
+          light::LightState *lB = nullptr;
+          
+          if (isKuchnia) {
+            lA = id(O03_A);
+            lB = id(O03_B);
+          } else if (isJadalnia) {
+            lA = id(O02_A);
+            lB = id(O02_B);
+          } else if (isWypoczynek) {
+            lA = id(O01_A);
+            lB = id(O01_B);
+          } else {
+            return;
+          }
+          
+          if (pt == "LP") {
+            lA->turn_off().perform();
+            lB->turn_off().perform();
+          } else if (pt == "SP") {
+            auto isOnA = lA->current_values.is_on();
+            auto isOnB = lB->current_values.is_on();
+          
+            if ((!isOnA && !isOnB) || (isOnA && isOnB)) {
+              lA->turn_on().perform();
+              lB->turn_off().perform();
+            } else if (isOnA && !isOnB) {
+              lA->turn_off().perform();
+              lB->turn_on().perform();
+            } else if (!isOnA && isOnB) {
+              lA->turn_on().perform();
+              lB->turn_on().perform();
+            }
+          }
+          
 
+###### SALON ######
+
+###### SYPIALNIA ######
   - id: sypialnia
     parameters:
       sn: string #switch name
@@ -169,6 +219,7 @@ script:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
           id(O08).toggle().perform();
+###### SYPIALNIA ######
 
 ###### GABINET #####
   - id: gabinet
@@ -378,7 +429,7 @@ light:
     id: dont_use_14
 
 binary_sensor:
-###### SALON ZEWNATRZ ######
+###### SALON ZEWNATRZ    ######
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Prawa'
     id: S01_P #IN_01
@@ -449,120 +500,258 @@ binary_sensor:
             sn: "S04_L"
             pt: "OP"
 
-  ###### SYPIALNIA ZEWNATRZ #####
+###### SYPIALNIA ZEWNATRZ #####
 
-
+######  SALON  ################
   - platform: gpio
     name: 'Salon przy wyspie A - Prawa'
-    id: S02A_P
+    id: S02A_P #IN_03
     pin:
       pcf8574: pcf_inputs_1to14
       number: 2
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S02A_P OP -> Przy wyspie A prawy"
-        - script.execute:
-            id: salon
-            sn: "S02A_P"
-            pt: "OP"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S02A_P VLP -> Przy wyspie A prawy"
+          - script.execute:
+              id: salon
+              sn: "S02A_P"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S02A_P LP -> Przy wyspie A prawy"
+          - script.execute:
+              id: salon
+              sn: "S02A_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S02A_P SP -> Przy wyspie A prawy"
+          - script.execute:
+              id: salon
+              sn: "S02A_P"
+              pt: "SP"
 
   - platform: gpio
     name: 'Salon przy wyspie A - Lewa'
-    id: S02A_L
+    id: S02A_L #IN_04
     pin:
       pcf8574: pcf_inputs_1to14
       number: 3
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S02A_L OP -> Przy wyspie A lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S02A_L VLP -> Przy wyspie A lewy"
+          - script.execute:
+              id: salon
+              sn: "S02A_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S02A_L LP -> Przy wyspie A lewy"
+          - script.execute:
+              id: salon
+              sn: "S02A_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S02A_L SP -> Przy wyspie A lewy"
+          - script.execute:
+              id: salon
+              sn: "S02A_L"
+              pt: "SP"
 
   - platform: gpio
     name: 'Salon przy wyspie B - Prawa'
-    id: S02B_P
+    id: S02B_P #IN_05
     pin:
       pcf8574: pcf_inputs_1to14
       number: 4
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S02B_P OP -> Przy wyspie B prawa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S02B_P VLP -> Przy wyspie B prawy"
+          - script.execute:
+              id: salon
+              sn: "S02B_P"
+              pt: "VLP"
 
   - platform: gpio
     name: 'Salon przy wyspie B - Lewa'
-    id: S02B_L
+    id: S02B_L #IN_06
     pin:
       pcf8574: pcf_inputs_1to14
       number: 5
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S02B_L OP -> Przy wyspie B lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S02B_L VLP -> Przy wyspie B lewa"
+          - script.execute:
+              id: salon
+              sn: "S02B_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S02B_L LP -> Przy wyspie B lewa"
+          - script.execute:
+              id: salon
+              sn: "S02B_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S02B_L SP -> Przy wyspie B lewa"
+          - script.execute:
+              id: salon
+              sn: "S02B_L"
+              pt: "SP"
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Prawa'
-    id: S03A_P
+    id: S03A_P #IN_07
     pin:
       pcf8574: pcf_inputs_1to14
       number: 6
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03A_P OP -> Przy wejsciu A prawy"
-        - script.execute:
-            id: salon
-            sn: "S03A_P"
-            pt: "OP"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S03A_P VLP -> Przy wejsciu A prawy"
+          - script.execute:
+              id: salon
+              sn: "S03A_P"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S03A_P LP -> Przy wejsciu A prawy"
+          - script.execute:
+              id: salon
+              sn: "S03A_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S03A_P SP -> Przy wejsciu A prawy"
+          - script.execute:
+              id: salon
+              sn: "S03A_P"
+              pt: "SP"
 
   - platform: gpio
     name: 'Salon przy wejsciu A - Lewa'
-    id: S03A_L
+    id: S03A_L #IN_08
     pin:
       pcf8574: pcf_inputs_1to14
       number: 8
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03A_L OP -> Przy wejsciu A lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S03A_L VLP -> Przy wejsciu A lewa"
+          - script.execute:
+              id: salon
+              sn: "S03A_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S03A_L LP -> Przy wejsciu A lewa"
+          - script.execute:
+              id: salon
+              sn: "S03A_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S03A_L SP -> Przy wejsciu A lewa"
+          - script.execute:
+              id: salon
+              sn: "S03A_L"
+              pt: "SP"
 
   - platform: gpio
     name: 'Salon przy wejsciu B - Prawa'
-    id: S03B_P
+    id: S03B_P #IN_09
     pin:
       pcf8574: pcf_inputs_1to14
       number: 9
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03B_P OP -> Przy wejsciu B prawy"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S03B_P VLP -> Przy wejsciu B prawa"
+          - script.execute:
+              id: salon
+              sn: "S03B_P"
+              pt: "VLP"
 
   - platform: gpio
     name: 'Salon przy wejsciu B - Lewa'
-    id: S03B_L
+    id: S03B_L #IN_10
     pin:
       pcf8574: pcf_inputs_1to14
       number: 10
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S03B_P OP -> Przy wejsciu B lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S03B_L VLP -> Przy wejsciu B lewa"
+          - script.execute:
+              id: salon
+              sn: "S03B_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S03B_L LP -> Przy wejsciu B lewa"
+          - script.execute:
+              id: salon
+              sn: "S03B_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S03B_L SP -> Przy wejsciu B lewa"
+          - script.execute:
+              id: salon
+              sn: "S03B_L"
+              pt: "SP"
+
+######  SALON  ################
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'

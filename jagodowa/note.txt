@@ -45,11 +45,11 @@ S12_P                                                                           
    Zmiany fizyczne do wykonania!
    - W puszce na strychu spiac oświetlenie z elewacji i podbitki w jedno O04 + O05 -> O04
    - W puszce na strychu dodać obwód na gniazdko w podbitce podpiete pod stare O05 będące teraz GZ01
-   - Spić ten obwód z obwodem wentylatora
+   - Spiąć ten obwód z obwodem wentylatora
 
    - O05 -> GZ01                                                                                                     [D]
    - S01_P i S04_P Włącza i wyłącza gniazda zewnetrzne (wszystkie) GZ01, GZ02, GZ03                                  [D]
-     - Jesli ktorekolwiek gniazdko wlaczone to wylacz jak wszystkie wylaczone to wlacz
+     - Jesli ktorekolwiek gniazdko wlaczone to wylacz jak wszystkie wylaczone to wlacz                               [D]
    - S01_L i S04_L Sterowanie oświetleniem zewnetrznym elewacja front/podbitka/wejscie do domu  O04 i O11            [D]
      - Jeśli naciśniemy i obie były wyłączone, to włączamy.                                                          [D]
      - Jeśli włączone to wyłączamy tylko wtedy gdy jest poza okienkiem dzialania oświetlenia                         [D]
@@ -58,6 +58,14 @@ S12_P                                                                           
     - Oświetlenie kuchnia    O03A i O03B sterowane S02A_L, S03A_L
     - Oświetlenie jadalnia   O02A i O02B sterowane S02A_P, S03A_P
     - Oświetlenie wypoczynek O01A i O01B sterowane S02B_L, S03B_L
+      - Dla wszystkich stref zasada działania taka sama, jeżeli przyciśnięte dłużej niż 1s,                          [D]
+        ale nie wiecej niż 3s (LP) to wyłączamy daną sekcję. Jeśli krócej niż 1s (SP) to następujące działanie:      [D]
+        A:0;B:0 -> SP -> A:1;B:0 -> SP -> A:0;B:1 -> SP -> A:1;B:1 -> SP ->                                          [D]
+
+    - S02A_L lub S03A_L jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
+    - S02A_P lub S03A_P jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
+    - S02B_L lub S03B_L jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
+    - S02B_P lub S03B_P jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
 
 - Sypialnia
 
