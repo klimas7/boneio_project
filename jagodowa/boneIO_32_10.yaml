@@ -324,13 +324,13 @@ light:
     output: out_06
     id: O03_B
   - platform: binary
-    name: 'Oswietlenie elewacja pole, podbitka'
-    output: out_07
-    id: O04
-  - platform: binary
     name: 'Gniazdo zewnetrzne podbitka pole'
-    output: out_08
+    output: out_07
     id: GZ01
+  - platform: binary
+    name: 'Oswietlenie elewacja pole, podbitka'
+    output: out_08
+    id: O04
   - platform: binary
     name: 'Wentylator lazienka'
     output: out_09
