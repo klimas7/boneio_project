@@ -149,7 +149,7 @@ script:
             ESP_LOGI("extended_on_boot_time_check", "%s", "light no change");
           }
 
-###### SALON ######
+###### SALON ##########
   - id: salon
     parameters:
       sn: string #switch name
@@ -206,9 +206,7 @@ script:
               lB->turn_on().perform();
             }
           }
-          
-
-###### SALON ######
+###### SALON ##########
 
 ###### SYPIALNIA ######
   - id: sypialnia
@@ -221,7 +219,7 @@ script:
           id(O08).toggle().perform();
 ###### SYPIALNIA ######
 
-###### GABINET #####
+###### GABINET ########
   - id: gabinet
     parameters:
       sn: string #switch name
@@ -237,8 +235,9 @@ script:
           if (sn == "S12_L" && pt == "SP") {
             id(O10).turn_on().perform();
           }
-###### GABINET #####
+###### GABINET ########
 
+###### PRZEDPOKOJ #####
   - id: przedpokoj
     parameters:
       sn: string #switch name
@@ -246,7 +245,9 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("przedpokoj", "%s %s", sn.c_str(), pt.c_str());
+###### PRZEDPOKOJ #####
 
+###### LAZIENKA #######
   - id: lazienka
     parameters:
       sn: string #switch name
@@ -255,6 +256,8 @@ script:
       - lambda: |-
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
           id(O09).toggle().perform();
+###### LAZIENKA #######
+
 ###### ZEWNATRZ ######
   - id: zewnatrz
     parameters:
@@ -752,7 +755,7 @@ binary_sensor:
               pt: "SP"
 
 ######  SALON  ################
-
+###### SYPIALNIA ##############
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'
     id: S05_P
@@ -886,7 +889,8 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S07_LG OP -> lewa lewa gora"
-
+###### SYPIALNIA ##############
+###### LAZIENKA  ##############
   - platform: gpio
     name: 'Lazienka przy lustrze - Prawa'
     id: S08_P
@@ -896,9 +900,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S08_P OP -> lustro prawa"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S08_P LP -> lustro prawa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S08_P SP -> lustro prawa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_P"
+              pt: "SP"
 
   - platform: gpio
     name: 'Lazienka przy lustrze - Lewa'
@@ -909,9 +927,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S08_L OP -> lustro lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S08_L LP -> lustro lewa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S08_L SP -> lustro lewa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_L"
+              pt: "SP"
 
   - platform: gpio
     name: 'Wejscie do lazienki - Gora'
@@ -922,13 +954,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S09_G OP -> Wejscie gora"
-        - script.execute:
-            id: lazienka
-            sn: "S09_L"
-            pt: "OP"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S09_G LP -> Wejscie gora"
+          - script.execute:
+              id: lazienka
+              sn: "S09_G"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S09_G SP -> Wejscie gora"
+          - script.execute:
+              id: lazienka
+              sn: "S09_G"
+              pt: "SP"
 
   - platform: gpio
     name: 'Wejscie do lazienki - Dol'
@@ -942,7 +984,8 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S09_D OP -> Wejscie dol"
-
+###### LAZIENKA  ##############
+###### PRZEDPOKOJ  ##############
   - platform: gpio
     name: 'Przedpokoj wejscie do sypialni/salonu'
     id: S10
@@ -982,7 +1025,7 @@ binary_sensor:
       then:
         - logger.log: "S11_L OP -> przedpokoj wejscie lewa"
         - light.toggle: O12
-
+  ###### PRZEDPOKOJ  ##############
 ###################################### GABINET ######################################
   - platform: gpio
     name: 'Gabinet - Prawa'

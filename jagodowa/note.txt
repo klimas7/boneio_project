@@ -66,10 +66,39 @@ S12_P                                                                           
     - S02B_L lub S03B_L jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
     - S02B_P lub S03B_P jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
 
+[x.12.2025]
 - Sypialnia
+  - scenariusz_sypialnia.txt
 
 - Łazienka
-    - [D] Oświetlenie główne O09 jest sterowane S09_G
-    - Ledy L07 (lustro) L08 (WC) sterowane z S09_G
-    - Oswietlenie O09 sterowane S08_P
-    - Ledy L05 (wanna) L06 (prysznic) sterowane S08_L
+    - S09_G - Wejscie do lazienki - Gora
+    - S08_P - Lazienka przy lustrze - Prawa
+    - S08_L - Lazienka przy lustrze - Lewa
+
+    - O09 - Lazienka glowne         //BoneIO_32_10
+    - L05 - Lazienka wanna          //boneIO_dl_02.yaml
+    - L06 - Lazienka prysznic       //boneIO_dl_02.yaml
+    - L07 - Lazienka szafka/lustro  //boneIO_dl_02.yaml
+    - L08 - Lazienka wc             //boneIO_dl_02.yaml
+    - W01 - Wentylator              //BoneIO_32_10
+
+    - S09_G Sterujemy L07 i L08 oraz W01
+
+
+    - Po krótkim (SP) naciśnięciu przy wejściu S09_G, jeśli L08 lub L07 włączone to
+        - wyłączamy Led przy WC L08,
+        - wyłączamy Led szafka/lustro L07
+    - S08_P
+        - SP włącza i wyłącza O09
+        - LP wyłącza O09, L05, L06
+    - S08_L
+        - SP włącza i wyłącza L05 i L06
+        - LP wyłącza O09, L05, L06
+        
+- Wentylator
+
+- Pompa obiegowa
+
+- Oświetlenie nocne
+
+- Czujniki ruchu 
