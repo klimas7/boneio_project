@@ -1,6 +1,11 @@
-D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104
+D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104     //boneIO_32_10.yaml
 D8-13-2A-7D-86-E0   192.168.18.32   boneio-dr-8ch-03-7d86e0   //boneIO_dl_01.yaml
 D8-13-2A-7C-85-00   192.168.18.60   boneio-dr-8ch-03-7c8500   //boneIO_dl_02.yaml 
+
+Słownik
+- SP  short press (poniżej 1s)
+- LP  long press (powyżej 1s)
+- VLP very long press (powyżej 3s)
 
 - [D] Swiatlo w salonie
 - [D] Swiatlo w sypiali
@@ -82,21 +87,28 @@ S12_P                                                                           
     - L08 - Lazienka wc             //boneIO_dl_02.yaml
     - W01 - Wentylator              //BoneIO_32_10
 
-    - S09_G Sterujemy L07 i L08 oraz W01
-
-
-    - Po krótkim (SP) naciśnięciu przy wejściu S09_G, jeśli L08 lub L07 włączone to
-        - wyłączamy Led przy WC L08,
-        - wyłączamy Led szafka/lustro L07
+    - S09_G
+       - LP Wyłącza całe oświetlenie w łazience L05, L06, L07, L08, O09 oraz publikuje stan LED_STATE false          [D]
+       - SP Włącza lub wyłącza Led przy wc L08 oraz przy lustrze L07                                                 [D]
+            - Jeśli którekolwiek było włączone, to wyłącza i publikuje stan LED_STATE false                          [D]
+            - Jeśli którekolwiek było wyłączone, to włącza i publikuje stan LED_STATE true                           [D]
     - S08_P
-        - SP włącza i wyłącza O09
-        - LP wyłącza O09, L05, L06
+        - SP włącza i wyłącza O09                                                                                    [D]
+        - LP wyłącza O09, L05, L06                                                                                   [D]
     - S08_L
-        - SP włącza i wyłącza L05 i L06
-        - LP wyłącza O09, L05, L06
+        - SP włącza i wyłącza L05 i L06                                                                              [D]
+        - LP wyłącza O09, L05, L06                                                                                   [D]
         
 - Wentylator
-
+    - Sterowanie w oparciu o publikowany LED_STATE                                                                   [D]
+        - Jeśli LED_STATE true -> ON to wentylator zostanie włączony za 1min                                         [D]
+        - Jeśli LED_STATE false -> OFF to wentylator zostanie wyłączony za 2min                                      [D]
+        - W skrócie wentylator
+            - włącza się 1minute po tym, jak zapala się światła wejściowe (led lustro i WC)
+            - wyłącza się 2miuty po tym, jak zgasną światła wejściowe (led lustro i WC)
+        - technicznie skrypt wyłączający wentylator jest resetowany po każdym zgaszeniu.
+          Czyli liczy się ostatnie wyłączenie. Ponowne włączenie światła w trakcie procedury wyłączania (tych 2 minut)
+          zatrzyma wyłączanie, czyli wentylator będzie działał do kolejnego wyłączenie światła.
 - Pompa obiegowa
 
 - Oświetlenie nocne

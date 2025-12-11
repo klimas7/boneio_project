@@ -255,7 +255,19 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
-          id(O09).toggle().perform();
+          
+          if (sn == "S09_G" && pt == "LP") {
+            id(O09).turn_off().perform();
+          }
+          
+          if (sn == "S08_P" && pt == "SP") {
+            id(O09).toggle().perform();  
+          }
+          
+          if ((sn == "S08_P" || sn == "S08_L") && pt == "LP") {
+            id(O09).turn_off().perform();
+          }
+
 ###### LAZIENKA #######
 
 ###### ZEWNATRZ ######
@@ -300,6 +312,25 @@ script:
             }
           }
 ###### ZEWNATRZ ######
+
+##### WENTYLATOR #####
+  - id: wentylator_on
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGI("wentylator", "on");
+      - script.stop: wentylator_off
+      - delay: 1min
+      - light.turn_on: W01
+
+  - id: wentylator_off
+    mode: restart
+    then:
+      - lambda: |-
+          ESP_LOGI("wentylator", "off");
+      - delay: 2min
+      - light.turn_off: W01
+##### WENTYLATOR #####
 
 light:
   - platform: binary
@@ -1173,6 +1204,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-dr-8ch-03-7c8500
+    id: remote_LED_STATE
+    remote_id: LED_STATE
+    type: data
+    on_state_change:
+      then:
+        - lambda: |-
+            auto ledState = x.has_value() ? ONOFF(x.value()) : "Unknown";
+            ESP_LOGI("LED_STATE", "%s", ledState);
+            if (ledState == "ON") {
+              id(wentylator_on).execute();
+            } else if (ledState == "OFF") {
+              id(wentylator_off).execute();
+            }
+
 ######################
 ### MODBUS SECTION ###
 ######################

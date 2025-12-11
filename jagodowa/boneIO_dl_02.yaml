@@ -48,6 +48,11 @@ udp:
 packet_transport:
   - id: transport
     platform: udp
+    update_interval: 5s
+    encryption: 'JAG_BONEIO3_KEY' #set it to yours shared secret key
+    rolling_code_enable: true
+    binary_sensors:
+      - LED_STATE
     providers:
       - name: boneio-32-l-07-39d104
         encryption: 'JAG_BONEIO1_KEY' #set it to yours shared secret key
@@ -98,6 +103,7 @@ text_sensor:
     update_interval: 5min
 
 script:
+##### SALON ###########################
   - id: salon
     parameters:
       sn: string #switch name
@@ -141,7 +147,8 @@ script:
               id(L02).turn_on().perform();
             }
           }
-
+##### SALON ###########################
+##### LAZIENKA ########################
   - id: lazienka
     parameters:
       sn: string #switch name
@@ -149,8 +156,41 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("lazienka", "%s %s", sn.c_str(), pt.c_str());
+          
+          if (sn == "S09_G" && pt == "LP") {
+            id(L05).turn_off().perform();
+            id(L06).turn_off().perform();
+            id(L07).turn_off().perform();
+            id(L08).turn_off().perform();
+            id(LED_STATE).publish_state(false);
+          }
+          
+          if (sn == "S09_G" && pt == "SP") {
+            auto isLedOn = (id(L07).current_values.is_on() || id(L08).current_values.is_on());
+            if (isLedOn) {
+              id(L07).turn_off().perform();
+              id(L08).turn_off().perform();
+            } else {
+              id(L07).turn_on().perform();
+              id(L08).turn_on().perform();
+            }
+            // PublishState
+            id(LED_STATE).publish_state(!isLedOn);
+          }
+          
+          if (sn == "S08_L" && pt == "SP") {
+            id(L05).toggle().perform();  
+            id(L06).toggle().perform();  
+          }
+          
+          if ((sn == "S08_P" || sn == "S08_L") && pt == "LP") {
+            id(L05).turn_off().perform();  
+            id(L06).turn_off().perform();
+          }
+##### LAZIENKA #########################
 
 binary_sensor:
+###### SALON ##########################
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
@@ -182,7 +222,6 @@ binary_sensor:
               id: salon
               sn: "S02B_P"
               pt: "SP"
-
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
@@ -214,6 +253,81 @@ binary_sensor:
               id: salon
               sn: "S03B_P"
               pt: "SP"
+###### SALON ##########################
+###### LAZIENKA #######################
+  - platform: template
+    id: LED_STATE
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S09_G
+    remote_id: S09_G  # Wejscie do lazienki - Gora
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S09_G LP -> Wejscie gora"
+          - script.execute:
+              id: lazienka
+              sn: "S09_G"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S09_G SP -> Wejscie gora"
+          - script.execute:
+              id: lazienka
+              sn: "S09_G"
+              pt: "SP"
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S08_P
+    remote_id: S08_P # Lazienka przy lustrze - prawa
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S08_P LP -> lustro prawa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S08_P SP -> lustro prawa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_P"
+              pt: "SP"
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S08_L
+    remote_id: S08_L  # Lazienka przy lustrze - Lewa
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S08_L LP -> lustro lewa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S08_L SP -> lustro lewa"
+          - script.execute:
+              id: lazienka
+              sn: "S08_L"
+              pt: "SP"
+###### LAZIENKA #######################
 
 light:
   # Lazienka
