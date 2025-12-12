@@ -11,11 +11,11 @@ Ledowe o oznaczeniu
 Sterowanie odbywa się poprzez przyciski monostabilne
 - Podwójny przycisk monostabilny S05 przy wejściu
   Oznaczenie poszczególnych przycisków
-    A - po prawej stronie -> S05A
-    B - po lewej stronie  -> S05B
+    A - po prawej stronie -> S05A -> S05_P
+    B - po lewej stronie  -> S05B -> S05_L
 - Poczwórny przycisk monostabilny S06 po prawej stronie łóżka
   Oznaczenie poszczególnych przycisków
-    A - prawy gorny róg -> S06A
+    A - prawy gorny róg -> S06A -> S06_PG
     B - prawy dolny róg -> S06B
     C - Lewy gorny róg  -> S06C
     D - Lewy dolny róg  -> S06D
@@ -27,8 +27,9 @@ Sterowanie odbywa się poprzez przyciski monostabilne
 
 Każdy z przycisków może wyzwolić akcje po krótkim naciśnięciu SP (short push) oraz po długim naciśnięciu LP (long push)
 
-Jeżeli S05B zostanie nacisniety krótko (SP) To zmieni się stan O08 (on->off lub off->on)    D
-Jeżeli S05B zostanie naciśniety długo (LP) To 006, O07 i O08 zostaną wyłączone (off)        D
+Jeżeli S05_L zostanie nacisniety krótko (SP) To zmieni się stan O08 (on->off lub off->on)    D
+Jeżeli S05_L zostanie naciśniety długo (LP) To O08 zostaną wyłączone (off)        D
+Jeżeli S05_L zostanie naciśniety bardzo długo (VLP) To O08 zostaną wyłączone (off)        D
 
 Jeżeli S05A zostanie nacisniety krótko (SP) To zmieni się stan L03 (on->off lub off->on)    D
 Jeżeli S05A zostanie naciśniety długo (LP) To L03 i L04 zostaną wyłączone (off)             D

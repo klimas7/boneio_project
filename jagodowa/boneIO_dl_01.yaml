@@ -146,7 +146,7 @@ script:
             }
           }
 ###### GABINET #####
-
+###### SYPIALNIA #####
   - id: sypialnia
     parameters:
       sn: string #switch name
@@ -155,7 +155,10 @@ script:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
 
+###### SYPIALNIA #####
+
 binary_sensor:
+######### PRZEDPOKOJ #######################################
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
@@ -195,7 +198,8 @@ binary_sensor:
             id: przedpokoj
             sn: "S09_D"
             pt: "OP"
-###################################### GABINET ######################################
+######### PRZEDPOKJ #######################################
+######### GABINET    #######################################
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
@@ -227,7 +231,6 @@ binary_sensor:
               id: gabinet
               sn: "S12_P"
               pt: "SP"
-
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
@@ -243,30 +246,175 @@ binary_sensor:
               id: gabinet
               sn: "S12_L"
               pt: "VLP"
-###################################### GABINET ######################################
+######### GABINET    #######################################
+######### SYPIALNIA  #######################################
+# S05_L S05_P S07_LG S07_LD S06_PG S06_PD
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S05_L
+    remote_id: S05_L
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S05_L VLP -> Sypialnia wejscie lewa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_L"
+              pt: "VLP"
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S05_P
+    remote_id: S05_P
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S05_P VLP -> Sypialnia wejscie prawa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_P"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S05_P LP -> Sypialnia wejscie prawa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_P"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S05_P SP -> Sypialnia wejscie prawa"
+          - script.execute:
+              id: sypialnia
+              sn: "S12_P"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S06_PG
+    remote_id: S06_PG
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_PG LP -> Sypialnia prawa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_PG SP -> Sypialnia prawa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PG"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S06_PD
+    remote_id: S06_PD
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_PD LP -> Sypialnia prawa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_PD SP -> Sypialnia prawa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PD"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S07_LG
+    remote_id: S07_LG
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_LG LP -> Sypialnia lewa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_LG SP -> Sypialnia lewa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LG"
+              pt: "SP"
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S07_LD
+    remote_id: S07_LD
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_LD LP -> Sypialnia lewa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_LD SP -> Sypialnia lewa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LD"
+              pt: "SP"
+######### SYPIALNIA  #######################################
 
 light:
   - platform: monochromatic
     output: chl01
-    name: 'L03'
+    name: 'L03 - Blenda sypialnia'
     id: L03
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl02
-    name: 'L04'
+    name: 'L04 - Lozko sypialnia'
     id: L04
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl03
-    name: 'L11'
+    name: 'L11 - Gabinet polka'
     id: L11
     default_transition_length: 2s
     gamma_correct: 0
   - platform: monochromatic
     output: chl04
-    name: 'L12'
+    name: 'L12 - Gabinet blenda'
     id: L12
     default_transition_length: 2s
     gamma_correct: 0

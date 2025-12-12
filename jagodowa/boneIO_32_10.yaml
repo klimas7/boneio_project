@@ -216,7 +216,10 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
-          id(O08).toggle().perform();
+          
+          if ((sn == "S05_L" || sn == "S07_PG" || sn == "S06_LG")) && pt == "SP") {
+            id(O08).toggle().perform();
+          }
 ###### SYPIALNIA ######
 
 ###### GABINET ########
@@ -322,7 +325,6 @@ script:
       - script.stop: wentylator_off
       - delay: 1min
       - light.turn_on: W01
-
   - id: wentylator_off
     mode: restart
     then:
@@ -480,7 +482,6 @@ binary_sensor:
             id: zewnatrz
             sn: "S01_P"
             pt: "OP"
-
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Lewa'
     id: S01_L #IN_02
@@ -497,7 +498,6 @@ binary_sensor:
             id: zewnatrz
             sn: "S01_L"
             pt: "OP"
-
 ###### SALON ZEWNATRZ    ######
 ###### SYPIALNIA ZEWNATRZ #####
   - platform: gpio
@@ -516,7 +516,6 @@ binary_sensor:
             id: zewnatrz
             sn: "S04_P"
             pt: "OP"
-
   - platform: gpio
     name: 'Sypialnia przy oknie tarasowym - Lewa'
     id: S04_L #IN_12
@@ -533,7 +532,6 @@ binary_sensor:
             id: zewnatrz
             sn: "S04_L"
             pt: "OP"
-
 ###### SYPIALNIA ZEWNATRZ #####
 
 ######  SALON  ################
@@ -571,7 +569,6 @@ binary_sensor:
               id: salon
               sn: "S02A_P"
               pt: "SP"
-
   - platform: gpio
     name: 'Salon przy wyspie A - Lewa'
     id: S02A_L #IN_04
@@ -606,7 +603,6 @@ binary_sensor:
               id: salon
               sn: "S02A_L"
               pt: "SP"
-
   - platform: gpio
     name: 'Salon przy wyspie B - Prawa'
     id: S02B_P #IN_05
@@ -625,7 +621,6 @@ binary_sensor:
               id: salon
               sn: "S02B_P"
               pt: "VLP"
-
   - platform: gpio
     name: 'Salon przy wyspie B - Lewa'
     id: S02B_L #IN_06
@@ -660,7 +655,6 @@ binary_sensor:
               id: salon
               sn: "S02B_L"
               pt: "SP"
-
   - platform: gpio
     name: 'Salon przy wejsciu A - Prawa'
     id: S03A_P #IN_07
@@ -695,7 +689,6 @@ binary_sensor:
               id: salon
               sn: "S03A_P"
               pt: "SP"
-
   - platform: gpio
     name: 'Salon przy wejsciu A - Lewa'
     id: S03A_L #IN_08
@@ -730,7 +723,6 @@ binary_sensor:
               id: salon
               sn: "S03A_L"
               pt: "SP"
-
   - platform: gpio
     name: 'Salon przy wejsciu B - Prawa'
     id: S03B_P #IN_09
@@ -749,7 +741,6 @@ binary_sensor:
               id: salon
               sn: "S03B_P"
               pt: "VLP"
-
   - platform: gpio
     name: 'Salon przy wejsciu B - Lewa'
     id: S03B_L #IN_10
@@ -784,7 +775,6 @@ binary_sensor:
               id: salon
               sn: "S03B_L"
               pt: "SP"
-
 ######  SALON  ################
 ###### SYPIALNIA ##############
   - platform: gpio
@@ -796,9 +786,15 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S05_P OP -> Przy wejsciu - prawa"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S05_P VLP -> Przy wejsciu prawy"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_P"
+              pt: "VLP"
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Lewa'
@@ -809,13 +805,31 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S05_L OP -> Przy wejsciu lewa"
-        - script.execute:
-            id: sypialnia
-            sn: "S05_L"
-            pt: "OP"
+    on_multi_click:
+      - timing:
+          - ON for at least 3s
+        then:
+          - logger.log: "S05_L VLP -> Przy wejsciu lewa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_L"
+              pt: "VLP"
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S05_L LP -> Przy wejsciu lewa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_L"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S05_L SP -> Przy wejsciu lewa"
+          - script.execute:
+              id: sypialnia
+              sn: "S05_L"
+              pt: "SP"
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Prawa Dol'
@@ -826,9 +840,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S06_PD OP -> prawa prawa dol"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_PD LP -> prawa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_PD SP -> prawa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PD"
+              pt: "SP"
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Prawa Gora'
@@ -839,12 +867,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S06_PG OP -> prawa prawa gora"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_PG LP -> prawa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_PG SP -> prawa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_PG"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po prawej - Lewa Dol'
+    name: 'Sypialnia przy lozku po prawej - Lewa Dol'
     id: S06_LD
     pin:
       pcf8574: pcf_inputs_15to28
@@ -852,12 +894,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S06_LD OP -> prawa lewa dol"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_LD LP -> prawa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_LD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_LD SP -> prawa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_LD"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po prawej - Lewa Gora'
+    name: 'Sypialnia przy lozku po prawej - Lewa Gora'
     id: S06_LG
     pin:
       pcf8574: pcf_inputs_15to28
@@ -865,12 +921,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S06_LG OP -> prawa lewa gora"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S06_LG LP -> prawa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_LG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S06_LG SP -> prawa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S06_LG"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po lewej - Prawa Dol'
+    name: 'Sypialnia przy lozku po lewej - Prawa Dol'
     id: S07_PD
     pin:
       pcf8574: pcf_inputs_15to28
@@ -878,12 +948,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S07_PD OP -> lewa prawa dol"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_PD LP -> lewa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_PD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_PD SP -> lewa prawa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_PD"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po lewej - Prawa Gora'
+    name: 'Sypialnia przy lozku po lewej - Prawa Gora'
     id: S07_PG
     pin:
       pcf8574: pcf_inputs_15to28
@@ -891,12 +975,26 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S07_PG OP -> lewa prawa gora"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_PG LP -> lewa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_PG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_PG SP -> lewa prawa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_PG"
+              pt: "SP"
 
   - platform: gpio
-    name: 'Sypialnia przy łużku po lewej - Lewa Dol'
+    name: 'Sypialnia przy lozku po lewej - Lewa Dol'
     id: S07_LD
     pin:
       pcf8574: pcf_inputs_15to28
@@ -904,9 +1002,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S07_LD OP -> lewa lewa dol"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_LD LP -> lewa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LD"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_LD SP -> lewa lewa dol"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LD"
+              pt: "SP"
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Lewa Gora'
@@ -917,9 +1029,23 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S07_LG OP -> lewa lewa gora"
+    on_multi_click:
+      - timing:
+          - ON for at least 1s
+        then:
+          - logger.log: "S07_LG LP -> lewa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LG"
+              pt: "LP"
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "S07_LG SP -> lewa lewa gora"
+          - script.execute:
+              id: sypialnia
+              sn: "S07_LG"
+              pt: "SP"
 ###### SYPIALNIA ##############
 ###### LAZIENKA  ##############
   - platform: gpio
@@ -948,7 +1074,6 @@ binary_sensor:
               id: lazienka
               sn: "S08_P"
               pt: "SP"
-
   - platform: gpio
     name: 'Lazienka przy lustrze - Lewa'
     id: S08_L
@@ -975,7 +1100,6 @@ binary_sensor:
               id: lazienka
               sn: "S08_L"
               pt: "SP"
-
   - platform: gpio
     name: 'Wejscie do lazienki - Gora'
     id: S09_G
@@ -1002,7 +1126,6 @@ binary_sensor:
               id: lazienka
               sn: "S09_G"
               pt: "SP"
-
   - platform: gpio
     name: 'Wejscie do lazienki - Dol'
     id: S09_D
