@@ -112,7 +112,7 @@ script:
       - lambda: |-
           ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
           
-          // - SP -> L01:1;L2:0 -> SP -> L01:0;L02:1 -> SP -> L01:1; L02:1 -> SP ->
+          // - SP -> L01:1;L2:1 -> SP -> L01:1;L02:0 -> SP -> L01:0; L02:1 -> SP ->
           //     |                    |                     |
           //     |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
           //
@@ -129,7 +129,13 @@ script:
             auto isOnL01 = id(L01A).current_values.is_on() || id(L01B).current_values.is_on();
             auto isOnL02 = id(L02).current_values.is_on();
 
-            if ((!isOnL01 && !isOnL02) || (isOnL01 && isOnL02)) {
+            if ((!isOnL01 && !isOnL02) || (!isOnL01 && isOnL02)) {
+              id(L01A).turn_on().perform();
+              id(L01B).turn_on().perform();
+              id(L02).turn_on().perform();
+            }
+
+            if (isOnL01 && isOnL02) {
               id(L01A).turn_on().perform();
               id(L01B).turn_on().perform();
               id(L02).turn_off().perform();
@@ -138,12 +144,6 @@ script:
             if (isOnL01 && !isOnL02) {
               id(L01A).turn_off().perform();
               id(L01B).turn_off().perform();
-              id(L02).turn_on().perform();
-            }
-
-            if (!isOnL01 && isOnL02) {
-              id(L01A).turn_on().perform();
-              id(L01B).turn_on().perform();
               id(L02).turn_on().perform();
             }
           }
@@ -166,11 +166,15 @@ script:
           }
           
           if (sn == "S09_G" && pt == "SP") {
-            auto isLedOn = (id(L07).current_values.is_on() || id(L08).current_values.is_on());
+            auto isLedOn = (id(L05).current_values.is_on()
+                         || id(L07).current_values.is_on() 
+                         || id(L08).current_values.is_on());
             if (isLedOn) {
+              id(L05).turn_off().perform();
               id(L07).turn_off().perform();
               id(L08).turn_off().perform();
             } else {
+              id(L05).turn_on().perform();
               id(L07).turn_on().perform();
               id(L08).turn_on().perform();
             }
@@ -179,12 +183,10 @@ script:
           }
           
           if (sn == "S08_L" && pt == "SP") {
-            id(L05).toggle().perform();  
             id(L06).toggle().perform();  
           }
           
-          if ((sn == "S08_P" || sn == "S08_L") && pt == "LP") {
-            id(L05).turn_off().perform();  
+          if ((sn == "S08_P" || sn == "S08_L") && pt == "LP") {  
             id(L06).turn_off().perform();
           }
 ##### LAZIENKA #########################

@@ -48,7 +48,7 @@ packet_transport:
       - S09_G  #Lazienka  dl_02
       - S09_D  #Przedpokoj dl_01
       - S10    #Przedpokoj dl_01
-      - S11_P  #Przedpokoj dl_01
+      - S11_L  #Przedpokoj dl_01
       - S12_P  #Gabinet    dl_01
       - CO_1   #Przedpokoj dl_01
       - CO_2   #Przedpokoj dl_01
@@ -121,6 +121,11 @@ time:
         - logger.log: "Godzina 22:00"
         - light.turn_off: O04
         - light.turn_off: O11
+
+globals:
+  - id: fan_cycle_active
+    type: bool
+    initial_value: 'false'
 
 script:
   - id: !extend on_boot_time_check
@@ -195,14 +200,14 @@ script:
             auto isOnA = lA->current_values.is_on();
             auto isOnB = lB->current_values.is_on();
           
-            if ((!isOnA && !isOnB) || (isOnA && isOnB)) {
+            if ((!isOnA && !isOnB) || (!isOnA && isOnB)) {
+              lA->turn_on().perform();
+              lB->turn_on().perform();
+            } else if (isOnA && isOnB) {
               lA->turn_on().perform();
               lB->turn_off().perform();
             } else if (isOnA && !isOnB) {
               lA->turn_off().perform();
-              lB->turn_on().perform();
-            } else if (!isOnA && isOnB) {
-              lA->turn_on().perform();
               lB->turn_on().perform();
             }
           }
@@ -217,7 +222,7 @@ script:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
           
-          if ((sn == "S05_L" || sn == "S07_PG" || sn == "S06_LG")) && pt == "SP") {
+          if ((sn == "S05_L" || sn == "S07_PG" || sn == "S06_LG") && pt == "SP") {
             id(O08).toggle().perform();
           }
 ###### SYPIALNIA ######
@@ -321,17 +326,22 @@ script:
     mode: single
     then:
       - lambda: |-
-          ESP_LOGI("wentylator", "on");
-      - script.stop: wentylator_off
+          ESP_LOGI("wentylator", "on before delay");
       - delay: 1min
-      - light.turn_on: W01
+      - lambda: |-
+          ESP_LOGI("wentylator", "on after delay");
+          id(W01).turn_on().perform();
+
   - id: wentylator_off
     mode: restart
     then:
       - lambda: |-
-          ESP_LOGI("wentylator", "off");
+          ESP_LOGI("wentylator", "off before delay");
       - delay: 2min
-      - light.turn_off: W01
+      - lambda: |-
+          ESP_LOGI("wentylator", "off after delay");
+          id(W01).turn_off().perform();
+          id(fan_cycle_active) = false;
 ##### WENTYLATOR #####
 
 light:
@@ -1165,7 +1175,7 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S11_P OP -> przedpokoj wejscie prawa"
-
+        - light.toggle: O12
   - platform: gpio
     name: 'Przedpokoj wejscie do domu - Lewa'
     id: S11_L
@@ -1178,8 +1188,7 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S11_L OP -> przedpokoj wejscie lewa"
-        - light.toggle: O12
-  ###### PRZEDPOKOJ  ##############
+###### PRZEDPOKOJ  ##############
 ###################################### GABINET ######################################
   - platform: gpio
     name: 'Gabinet - Prawa'
@@ -1338,10 +1347,20 @@ binary_sensor:
         - lambda: |-
             auto ledState = x.has_value() ? ONOFF(x.value()) : "Unknown";
             ESP_LOGI("LED_STATE", "%s", ledState);
+            
             if (ledState == "ON") {
-              id(wentylator_on).execute();
-            } else if (ledState == "OFF") {
-              id(wentylator_off).execute();
+              id(wentylator_off).stop();
+              
+              if (!id(fan_cycle_active)) {
+                id(fan_cycle_active) = true;
+                id(wentylator_on).execute();
+              }
+            } 
+            
+            if (ledState == "OFF") {
+              if (id(fan_cycle_active)) {
+                id(wentylator_off).execute();
+              }
             }
 
 ######################

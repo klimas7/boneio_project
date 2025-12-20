@@ -71,7 +71,7 @@ S12_P                                                                           
     - S02B_L lub S03B_L jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
     - S02B_P lub S03B_P jeśli przycisnięte dłużej niż 3s (VLP) to wyłączyć wszystkie światła w salonie               [D]
 
-[x.12.2025]
+[19.12.2025]
 - Sypialnia
   - scenariusz_sypialnia.txt
 
@@ -109,6 +109,14 @@ S12_P                                                                           
         - technicznie skrypt wyłączający wentylator jest resetowany po każdym zgaszeniu.
           Czyli liczy się ostatnie wyłączenie. Ponowne włączenie światła w trakcie procedury wyłączania (tych 2 minut)
           zatrzyma wyłączanie, czyli wentylator będzie działał do kolejnego wyłączenie światła.
+
+[20.12.2025]
+    - led w lazience -> L05 ma się zaświecać razem z L07 i L08                                                       [D]
+    - zamiana przyciskow przy drzwiach wejsciowych                                                                   [D]
+    - ledy w salonie jako pierwsze wlaczaja sie oba                                                                  [D]
+    - swiatlo w czesci jadalnej włacza sie cale jako pierwsze                                                        [D]
+    - Wypoczynkowa też całe jako 1 może być (tak jak reszta )                                                        [D]
+
 - Pompa obiegowa
 
 - Oświetlenie nocne
