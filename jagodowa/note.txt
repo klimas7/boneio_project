@@ -117,7 +117,7 @@ S12_P                                                                           
     - swiatlo w czesci jadalnej włacza sie cale jako pierwsze                                                        [D]
     - Wypoczynkowa też całe jako 1 może być (tak jak reszta )                                                        [D]
 
-- Pompa obiegowa
+- Pompa obiegowa                                                                                                     [X]
 
 - Oświetlenie nocne
 

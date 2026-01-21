@@ -48,9 +48,9 @@ udp:
 packet_transport:
   - id: transport
     platform: udp
-    update_interval: 5s
+    update_interval: 30s
     encryption: 'JAG_BONEIO3_KEY' #set it to yours shared secret key
-    rolling_code_enable: true
+    rolling_code_enable: false
     binary_sensors:
       - LED_STATE
     providers:

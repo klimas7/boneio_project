@@ -32,9 +32,9 @@ udp:
 packet_transport:
   - id: transport
     platform: udp
-    update_interval: 5s
+    update_interval: 30s
     encryption: 'JAG_BONEIO1_KEY' #set it to yours shared secret key
-    rolling_code_enable: true
+    rolling_code_enable: false
     binary_sensors:
       - S02B_P #L01 & L02 Salon dl_02
       - S03B_P #L01 & L02 Salon dl_02
