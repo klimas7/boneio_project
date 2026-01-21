@@ -119,6 +119,49 @@ S12_P                                                                           
 
 - Pompa obiegowa                                                                                                     [X]
 
-- Oświetlenie nocne
+[21.01.2025]
+- Oświetlenie komunikacja
+    S10 - przycisk pomiędzy wejściem do sypialni a salonu
+    S11_L - lewy przycisk przy wejściu do domu
+    S09_D - dolny przycisk przy wejściu do łazienki
+    L10A L10B - ledy w przedpokoju
+    L09A L09B - ledy w komunikacji do łazienki
 
-- Czujniki ruchu 
+  - Aktualnie S10, S11_L, S09_D on_press wywołuje skrypt 'przedpokoj' gdzie ledy L09A L09B L10A L10B sę              [D]
+    przełączane (toggle)
+
+  - Ledy mogą mieć 3 stany:
+    - OFF (wyłączone)
+    - ON_15 (świecą na 15%)
+    - ON_100 (świecą na 100%)
+
+  - Naciśnięcie S10, S11_L, S09_D (on_press):
+      Jeżeli ledy były wyłączone OFF lub były włączone na 15% ON_15 to:
+        - resetuje skrypt wyłączenia pochodzący od czujników ruchu.
+        - załączamy ledy na 100% ON_100.
+        - uruchamia skrypt wyłączający ledy z opóźnieniem 20 minut (ledy wyłączą się po 20 minutach).
+      Jeżeli ledy były włączone na 100% ON_100 to wyłącza OFF.
+
+  - Zadziałanie czujnika ruchu CO_1 lub CO_2 (on_press):
+      Jeżeli ledy włączone na 100% ON_100 to nic nie rób.
+      Jeżeli ledy włączone na 15% ON_15 to nic nie rób.
+      Jeżeli ledy wyłączone OFF to:
+        - włącza na 15% ON_15
+        - uruchamia skrypt wyłączający ledy z opóźnieniem 1m30s (ledy wyłączą się po 1m 30s)
+
+- Sypialnia
+    S07_LG   SO7_PG   | łóżko |   S06_LG  S06_PG
+    S07_LD   S07_PD   |       |   S06_LD  S06_PD
+                      |       |
+
+    S05_L    S05_P
+
+    - S07 poczwórny przycisk po lewej  stronie łóżka (patrząc na łóżko)
+    - S06 poczwórny przycisk po prawej stronie łóżka (patrząc na łóżko)
+    - S05 podwójny przycisk przy wejściu do sypialni
+
+
+
+
+
+
