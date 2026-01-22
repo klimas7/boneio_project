@@ -1,3 +1,4 @@
+## Gabinet / Sypialnia / Komunikacja
 substitutions:
   name: boneio-dr-8ch-03-7d86e0
   friendly_name: 'BoneIO Dimmer LED 7d86e0'
@@ -10,6 +11,11 @@ esphome:
   project:
     name: boneio.dimmer-led
     version: '0.3'
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: |-
+            id(led_state_hall).publish_state("OFF");
 
 esp32:
   board: esp32dev
@@ -97,6 +103,9 @@ text_sensor:
     lambda: |-
       return id(eth).get_use_address();
     update_interval: 5min
+  - platform: template
+    name: "Led state"
+    id: led_state_hall
 
 script:
 ###### PRZEDPOKOJ ##############################################
@@ -107,10 +116,68 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("przedpokoj", "%s %s", sn.c_str(), pt.c_str());
-          id(L09A).toggle().perform();
-          id(L09B).toggle().perform();
-          id(L10A).toggle().perform();
-          id(L10B).toggle().perform();
+          
+          auto led_state = id(led_state_hall).state;
+          ESP_LOGI("przedpokoj", "%s", led_state);
+          
+          if (pt != "OP") {
+            return;
+          }
+          
+          if (sn == "CO") {
+            if (led_state == "OFF") {
+              id(turn_on_led_hall)->execute(0.15);
+              id(led_state_hall).publish_state("ON_15");
+              id(turn_off_led_hall_after)->execute(90);
+            } else if (led_state == "ON_15") {
+              id(turn_off_led_hall_after)->execute(90);
+            }
+          }
+          
+          if (sn == "SW") {
+            if (led_state == "OFF" || led_state == "ON_15") {
+              id(turn_off_led_hall_after)->stop();
+              id(turn_on_led_hall)->execute(1.);
+              id(led_state_hall).publish_state("ON_100");
+              id(turn_off_led_hall_after)->execute(900);
+            } else if (led_state == "ON_100") {
+              id(turn_off_led_hall_after)->stop();
+              id(turn_off_led_hall_after)->execute(0);
+            }
+          }
+
+  - id: turn_on_led_hall
+    parameters:
+      brightness: float
+    then:
+      - lambda: |-
+          ESP_LOGI("turn_on_led_hall", "set brightness %.2f", brightness);
+          
+          light::LightState* lights[] = { id(L09A), id(L09B), id(L10A), id(L10B)};
+          
+          for (auto *l : lights) {
+            auto call = l->turn_on();
+            call.set_brightness(brightness);
+            call.perform();
+          }
+
+  - id: turn_off_led_hall_after
+    mode: restart
+    parameters:
+      delay_s: int
+    then:
+      - lambda: |-
+          ESP_LOGI("turn_off_led_hall_after", "off before delay");
+          delay(delay_s * 1000);
+          ESP_LOGI("turn_off_led_hall_after", "off");
+          
+          light::LightState* lights[] = { id(L09A), id(L09B), id(L10A), id(L10B)};
+          for (auto *l : lights) {
+            auto call = l->turn_off();
+            call.perform();
+          }
+          id(led_state_hall).publish_state("OFF");
+
 ###### PRZEDPOKOJ ##############################################
 ###### GABINET ######
   - id: gabinet
@@ -171,7 +238,7 @@ binary_sensor:
         - logger.log: "R S10 OP -> przedpokoj sypialnia/salon"
         - script.execute:
             id: przedpokoj
-            sn: "S10"
+            sn: "SW"
             pt: "OP"
   - platform: packet_transport
     transport_id: transport
@@ -184,7 +251,7 @@ binary_sensor:
         - logger.log: "R S11_L OP -> przedpokoj sypialnia/salon"
         - script.execute:
             id: przedpokoj
-            sn: "S11_L"
+            sn: "SW"
             pt: "OP"
   - platform: packet_transport
     transport_id: transport
@@ -197,7 +264,33 @@ binary_sensor:
         - logger.log: "R S09_D OP -> przedpokoj sypialnia/salon"
         - script.execute:
             id: przedpokoj
-            sn: "S09_D"
+            sn: "SW"
+            pt: "OP"
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_CO_1
+    remote_id: CO_1
+    type: data
+    on_press:
+      then:
+        - logger.log: "CO_1 OP Czujnik obecnosci"
+        - script.execute:
+            id: przedpokoj
+            sn: "CO"
+            pt: "OP"
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_CO_2
+    remote_id: CO_2
+    type: data
+    on_press:
+      then:
+        - logger.log: "CO_2 OP Czujnik obecnosci"
+        - script.execute:
+            id: przedpokoj
+            sn: "CO"
             pt: "OP"
 ######### PRZEDPOKJ #######################################
 ######### GABINET    #######################################
