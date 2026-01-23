@@ -118,7 +118,7 @@ script:
           ESP_LOGI("przedpokoj", "%s %s", sn.c_str(), pt.c_str());
           
           auto led_state = id(led_state_hall).state;
-          ESP_LOGI("przedpokoj", "%s", led_state);
+          ESP_LOGI("przedpokoj", "%s", led_state.c_str());
           
           if (pt != "OP") {
             return;
@@ -167,8 +167,9 @@ script:
       delay_s: int
     then:
       - lambda: |-
-          ESP_LOGI("turn_off_led_hall_after", "off before delay");
-          delay(delay_s * 1000);
+          ESP_LOGI("turn_off_led_hall_after", "%d off before delay", delay_s);
+      - delay: !lambda return delay_s * 1000;
+      - lambda: |-
           ESP_LOGI("turn_off_led_hall_after", "off");
           
           light::LightState* lights[] = { id(L09A), id(L09B), id(L10A), id(L10B)};
