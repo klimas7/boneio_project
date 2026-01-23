@@ -343,6 +343,26 @@ script:
           id(W01).turn_off().perform();
           id(fan_cycle_active) = false;
 ##### WENTYLATOR #####
+##### ALL ############
+  - id: master_off
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGI("master_off", "start");
+          
+          light::LightState* lights[] = 
+            { id(O01_A), id(O01_B), id(O02_A), id(O02_B), id(O03_A), id(O03_B),
+              id(O06), id(O07), id(O08),
+              id(O09), id(O10), id(O12)
+            };
+          
+          for (auto *l : lights) {
+            auto call = l->turn_off();
+            call.perform();
+          }
+          
+          ESP_LOGI("master_off", "end");
+##### ALL ############
 
 light:
   - platform: binary
@@ -1185,9 +1205,14 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S11_L OP -> przedpokoj wejscie lewa"
+    on_multi_click:
+      - timing:
+          - ON for at least 5s
+        then:
+          - logger.log: "S11_L VLP -> przedpokoj wejscie lewa"
+          - script.execute:
+              id: master_off
+
 ###### PRZEDPOKOJ  ##############
 ###################################### GABINET ######################################
   - platform: gpio

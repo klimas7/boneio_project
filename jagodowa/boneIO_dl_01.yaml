@@ -225,6 +225,24 @@ script:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
 ###### SYPIALNIA #####
+##### ALL ############
+  - id: master_off
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGI("master_off", "start");
+          
+          light::LightState* lights[] = 
+            { id(L03), id(L04), id(L11), id(L12),
+              id(L09A), id(L09B), id(L10A), id(L10B)};
+          
+          for (auto *l : lights) {
+            auto call = l->turn_off();
+            call.perform();
+          }
+          
+          ESP_LOGI("master_off", "end");
+##### ALL ############
 
 binary_sensor:
 ######### PRZEDPOKOJ #######################################
@@ -247,13 +265,22 @@ binary_sensor:
     id: remote_S11_L
     remote_id: S11_L
     type: data
-    on_press:
-      then:
-        - logger.log: "R S11_L OP -> przedpokoj sypialnia/salon"
-        - script.execute:
-            id: przedpokoj
-            sn: "SW"
-            pt: "OP"
+    on_multi_click:
+      - timing:
+          - ON for at least 5s
+        then:
+          - logger.log: "S11_L VLP -> przedpokoj wejscie lewa"
+          - script.execute:
+              id: master_off
+      - timing:
+          - ON for at most 1s
+        then:
+          - logger.log: "R S11_L OP -> przedpokoj wejscie lewa"
+          - script.execute:
+              id: przedpokoj
+              sn: "SW"
+              pt: "OP"
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104

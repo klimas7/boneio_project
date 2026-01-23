@@ -191,6 +191,24 @@ script:
             id(L06).turn_off().perform();
           }
 ##### LAZIENKA #########################
+##### ALL ############
+  - id: master_off
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGI("master_off", "start");
+          
+          light::LightState* lights[] = 
+            { id(L05), id(L06), id(L07), id(L08),
+              id(L01A), id(L01B), id(L02)};
+          
+          for (auto *l : lights) {
+            auto call = l->turn_off();
+            call.perform();
+          }
+          
+          ESP_LOGI("master_off", "end");
+##### ALL ############
 
 binary_sensor:
 ###### SALON ##########################
@@ -331,6 +349,21 @@ binary_sensor:
               sn: "S08_L"
               pt: "SP"
 ###### LAZIENKA #######################
+###### PRZEDPOKOJ #####################
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S11_L
+    remote_id: S11_L
+    type: data
+    on_multi_click:
+      - timing:
+          - ON for at least 5s
+        then:
+          - logger.log: "S11_L VLP -> przedpokoj wejscie lewa"
+          - script.execute:
+              id: master_off
+###### PRZEDPOKOJ #####################
 
 light:
   # Lazienka
