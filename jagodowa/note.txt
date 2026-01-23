@@ -130,24 +130,27 @@ S12_P                                                                           
   - Aktualnie S10, S11_L, S09_D on_press wywołuje skrypt 'przedpokoj' gdzie ledy L09A L09B L10A L10B sę              [D]
     przełączane (toggle)
 
-  - Ledy mogą mieć 3 stany:
-    - OFF (wyłączone)
-    - ON_15 (świecą na 15%)
-    - ON_100 (świecą na 100%)
+  - Ledy mogą mieć 3 stany:                                                                                          [D]
+    - OFF (wyłączone)                                                                                                [D]
+    - ON_15 (świecą na 15%)                                                                                          [D]
+    - ON_100 (świecą na 100%)                                                                                        [D]
 
-  - Naciśnięcie S10, S11_L, S09_D (on_press):
-      Jeżeli ledy były wyłączone OFF lub były włączone na 15% ON_15 to:
-        - resetuje skrypt wyłączenia pochodzący od czujników ruchu.
-        - załączamy ledy na 100% ON_100.
-        - uruchamia skrypt wyłączający ledy z opóźnieniem 15 minut (ledy wyłączą się po 15 minutach).
-      Jeżeli ledy były włączone na 100% ON_100 to wyłącza OFF.
+  - Naciśnięcie S10, S11_L, S09_D (on_press):                                                                        [D]
+      Jeżeli ledy były wyłączone OFF lub były włączone na 15% ON_15 to:                                              [D]
+        - resetuje skrypt wyłączenia pochodzący od czujników ruchu.                                                  [D]
+        - załączamy ledy na 100% ON_100.                                                                             [D]
+        - uruchamia skrypt wyłączający ledy z opóźnieniem 15 minut (ledy wyłączą się po 15 minutach).                [D]
+      Jeżeli ledy były włączone na 100% ON_100 to wyłącza OFF.                                                       [D]
 
-  - Zadziałanie czujnika ruchu CO_1 lub CO_2 (on_press):
-      Jeżeli ledy włączone na 100% ON_100 to nic nie rób.
-      Jeżeli ledy włączone na 15% ON_15 to nic nie rób.
-      Jeżeli ledy wyłączone OFF to:
-        - włącza na 15% ON_15
-        - uruchamia skrypt wyłączający ledy z opóźnieniem 1m30s (ledy wyłączą się po 1m 30s)
+  - Zadziałanie czujnika ruchu CO_1 lub CO_2 (on_press):                                                             [D]
+      Jeżeli ledy włączone na 100% ON_100 to nic nie rób.                                                            [D]
+      Jeżeli ledy włączone na 15% ON_15 to nic nie rób.                                                              [D]
+      Jeżeli ledy wyłączone OFF to:                                                                                  [D]
+        - włącza na 15% ON_15                                                                                        [D]
+        - uruchamia skrypt wyłączający ledy z opóźnieniem 1m30s (ledy wyłączą się po 1m 30s)                         [D]
+
+- Master off
+  - Długie naciśniecie przycisku > 5s przy drzwiach wyjściowych gasi światła w całym domu
 
 - Sypialnia
     S07_LG   SO7_PG   | łóżko |   S06_LG  S06_PG
