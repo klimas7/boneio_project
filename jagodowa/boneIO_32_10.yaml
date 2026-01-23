@@ -32,9 +32,9 @@ udp:
 packet_transport:
   - id: transport
     platform: udp
-    update_interval: 5s
+    update_interval: 30s
     encryption: 'JAG_BONEIO1_KEY' #set it to yours shared secret key
-    rolling_code_enable: true
+    rolling_code_enable: false
     binary_sensors:
       - TS3_A
       - TS3_B
@@ -99,7 +99,13 @@ packages:
     ref: v1.8.10
     files: [ time.yaml, display.yaml ]
 
+
 logger:
+  level: VERBOSE
+  logs:
+    packet_transport: VERBOSE
+    i2c.idf: INFO
+    i2c: INFO
 api:
   reboot_timeout: 0s
 ota:
@@ -123,6 +129,11 @@ time:
       then:
         - logger.log: "Godzina 22:00"
         - light.turn_off: O01_A
+
+globals:
+  - id: fan_cycle_active
+    type: bool
+    initial_value: 'false'
 
 script:
   - id: !extend on_boot_time_check
@@ -207,31 +218,100 @@ script:
           // O01_A -> O1
           // O01_B -> O2
           
+          light::LightState *lA = nullptr;
+          light::LightState *lB = nullptr;
+
+          lA = id(O01_A);
+          lB = id(O01_B);
+
           if ((sn == "TS3_B" && pt == "LP") || pt == "VLP") {
-            id(O01_A).turn_off().perform();
-            id(O01_B).turn_off().perform();
+            lA->turn_off().perform();
+            lB->turn_off().perform();
           }
           
           if (sn == "TS3_B" && pt == "SP") {
-            auto isOnLO1 = id(O01_A).current_values.is_on();
-            auto isOnLO2 = id(O01_B).current_values.is_on();
+            auto isOnLO1 = lA->current_values.is_on();
+            auto isOnLO2 = lB->current_values.is_on();
             if ((!isOnLO1 && !isOnLO2) || (isOnLO1 && isOnLO2)) {
-              id(O01_A).turn_on().perform();
-              id(O01_B).turn_off().perform();
+              lA->turn_on().perform();
+              lB->turn_off().perform();
             }
           
             if (isOnLO1 && !isOnLO2) {
-              id(O01_A).turn_off().perform();
-              id(O01_B).turn_on().perform();
+              lA->turn_off().perform();
+              lB->turn_on().perform();
             }
           
             if (!isOnLO1 && isOnLO2) {
-              id(O01_A).turn_on().perform();
-              id(O01_B).turn_on().perform();
+              lA->turn_on().perform();
+              lB->turn_on().perform();
+            }
+          }
+
+  - id: wentylator_on
+    mode: single
+    then:
+      - lambda: |-
+          ESP_LOGI("wentylator", "on before delay");
+      - delay: 10s
+      - lambda: |-
+          ESP_LOGI("wentylator", "on after delay");
+          id(O01_A).turn_on().perform();
+
+  - id: wentylator_off
+    mode: restart
+    then:
+      - lambda: |-
+          ESP_LOGI("wentylator", "off before delay");
+      - delay: 15s
+      - lambda: |-
+          ESP_LOGI("wentylator", "off after delay");
+          id(O01_A).turn_off().perform();
+          id(fan_cycle_active) = false;
+
+  ###### ZEWNATRZ ######
+  - id: zewnatrz
+    parameters:
+      sn: string #switch name
+      pt: string #push type
+    then:
+      - lambda: |-
+          ESP_LOGI("zewnatrz", "%s %s", sn.c_str(), pt.c_str());
+          
+          if (pt != "OP") {
+            return;
+          }
+          
+          if (sn == "S01_P" || sn == "S04_P") {
+            auto isOnGZ = id(GZ01).current_values.is_on() || id(GZ02).current_values.is_on() || id(GZ03).current_values.is_on();
+            if (isOnGZ) {
+              id(GZ01).turn_off().perform();
+              id(GZ02).turn_off().perform();
+              id(GZ03).turn_off().perform();
+            } else {
+              id(GZ01).turn_on().perform();
+              id(GZ02).turn_on().perform();
+              id(GZ03).turn_on().perform();
             }
           }
           
-          
+          if (sn == "S01_L" || sn == "S04_L") {
+            auto isOn = id(O04).current_values.is_on() && id(O11).current_values.is_on();
+            if (!isOn) {
+              id(O04).turn_on().perform();
+              id(O11).turn_on().perform();
+            } else {
+              auto time = id(ds1307_time).now();
+              int h = time.hour;
+              auto shouldBeOn = (h >= 12 && h < 22 && id(CZ).state);
+              if (!shouldBeOn) {
+                id(O04).turn_off().perform();
+                id(O11).turn_off().perform();
+              }
+            }
+          }
+          ###### ZEWNATRZ ######          
+
 
 light:
   - platform: binary
@@ -475,7 +555,7 @@ binary_sensor:
     on_press:
       then:
         - logger.log: "S03A_L OP -> Przy wejsciu A lewa"
-######## TEST #######
+  ######## TEST #######
   - platform: gpio
     name: 'Test S3/A'
     id: TS3_A #IN_09
@@ -556,7 +636,40 @@ binary_sensor:
       then:
         - logger.log: "Test S3/D"
 
-######## TEST #######
+  ######## TEST #######
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-dr-8ch-03-30f8d8
+    id: remote_LED_STATE
+    remote_id: LED_STATE
+    type: data
+    on_state_change:
+      then:
+        - logger.log:
+            format: "Old state was %s"
+            args: ['x_previous.has_value() ? ONOFF(x_previous.value()) : "Unknown"']
+        - logger.log:
+            format: "New state is %s"
+            args: ['x.has_value() ? ONOFF(x.value()) : "Unknown"']
+        - lambda: |-
+            auto ledState = x.has_value() ? ONOFF(x.value()) : "Unknown";
+            ESP_LOGI("LED_STATE", "%s", ledState);
+            
+            if (ledState == "ON") {
+              id(wentylator_off).stop();
+
+              if (!id(fan_cycle_active)) {
+                id(fan_cycle_active) = true;
+                id(wentylator_on).execute();
+              }
+            } 
+            
+            if (ledState == "OFF") {
+              if (id(fan_cycle_active)) {
+                id(wentylator_off).execute();
+              }
+            }
+
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Prawa'
     id: S05_P
