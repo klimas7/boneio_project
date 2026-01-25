@@ -224,6 +224,28 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
+          
+          if (pt == "VLP") {
+            id(L03).turn_off().perform();
+            id(L04).turn_off().perform();
+          }
+          
+          if ((sn == "S05_P" || sn == "S07_LG" || sn == "S07_LD"
+                             || sn == "S06_PG" || sn == "S06_PD") && pt == "LP") {
+            id(L03).turn_off().perform();
+            id(L04).turn_off().perform();
+          }
+          
+          //L03
+          if ((sn == "S05_P" || sn == "S07_LG" || sn == "S06_PG") && pt == "SP") {
+            id(L03).toggle().perform();
+          }
+          
+          //L04
+          if ((sn == "S07_LD" || sn == "S06_PD") && pt == "SP") {
+            id(L04).toggle().perform();
+          }
+
 ###### SYPIALNIA #####
 ##### ALL ############
   - id: master_off
@@ -370,53 +392,39 @@ binary_sensor:
               pt: "VLP"
 ######### GABINET    #######################################
 ######### SYPIALNIA  #######################################
-# S05_L S05_P S07_LG S07_LD S06_PG S06_PD
+  # S05_L S05_P
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S05_L
     remote_id: S05_L
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S05_L VLP -> Sypialnia wejscie lewa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_L"
-              pt: "VLP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S05_L", script: "sypialnia" } }
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S05_P
     remote_id: S05_P
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S05_P VLP -> Sypialnia wejscie prawa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_P"
-              pt: "VLP"
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S05_P LP -> Sypialnia wejscie prawa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_P"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S05_P SP -> Sypialnia wejscie prawa"
-          - script.execute:
-              id: sypialnia
-              sn: "S12_P"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S05_P", script: "sypialnia" } }
+
+  # S06_LG S06_LD S06_PG S06_PD
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S06_LG
+    remote_id: S06_LG
+    type: data
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_LG", script: "sypialnia" } }
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S06_LD
+    remote_id: S06_LD
+    type: data
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_LD", script: "sypialnia" } }
 
   - platform: packet_transport
     transport_id: transport
@@ -424,23 +432,7 @@ binary_sensor:
     id: remote_S06_PG
     remote_id: S06_PG
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_PG LP -> Sypialnia prawa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_PG SP -> Sypialnia prawa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_PG", script: "sypialnia" } }
 
   - platform: packet_transport
     transport_id: transport
@@ -448,47 +440,16 @@ binary_sensor:
     id: remote_S06_PD
     remote_id: S06_PD
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_PD LP -> Sypialnia prawa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_PD SP -> Sypialnia prawa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_PD", script: "sypialnia" } }
 
+  # S07_LG S07_LD S07_PG S07_PD
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S07_LG
     remote_id: S07_LG
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_LG LP -> Sypialnia lewa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_LG SP -> Sypialnia lewa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_LG", script: "sypialnia" } }
 
   - platform: packet_transport
     transport_id: transport
@@ -496,23 +457,24 @@ binary_sensor:
     id: remote_S07_LD
     remote_id: S07_LD
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_LD LP -> Sypialnia lewa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_LD SP -> Sypialnia lewa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_LD", script: "sypialnia" } }
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S07_PG
+    remote_id: S07_PG
+    type: data
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_PG", script: "sypialnia" } }
+
+  - platform: packet_transport
+    transport_id: transport
+    provider: boneio-32-l-07-39d104
+    id: remote_S07_PD
+    remote_id: S07_PD
+    type: data
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_PD", script: "sypialnia" } }
+
 ######### SYPIALNIA  #######################################
 
 light:

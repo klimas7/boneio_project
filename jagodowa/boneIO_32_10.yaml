@@ -222,9 +222,34 @@ script:
       - lambda: |-
           ESP_LOGI("sypialnia", "%s %s", sn.c_str(), pt.c_str());
           
+          if (pt == "VLP") {
+            id(O06).turn_off().perform();
+            id(O07).turn_off().perform();
+            id(O08).turn_off().perform();
+          }
+          
           if ((sn == "S05_L" || sn == "S07_PG" || sn == "S06_LG") && pt == "SP") {
             id(O08).toggle().perform();
           }
+          
+          //O06
+          if (sn == "S07_PD" && pt == "SP") {
+            id(O06).toggle().perform();
+          }
+          
+          if (sn == "S06_LD" && pt == "LP") {
+            id(O06).turn_off().perform();
+          }
+          
+          //O07
+          if (sn == "S06_LD" && pt == "SP") {
+            id(O07).toggle().perform();
+          }
+          
+          if (sn == "S07_PD" && pt == "LP") {
+            id(O07).turn_off().perform();
+          }
+
 ###### SYPIALNIA ######
 
 ###### GABINET ########
@@ -816,15 +841,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S05_P VLP -> Przy wejsciu prawy"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_P"
-              pt: "VLP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S05_P", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy wejsciu - Lewa'
@@ -835,31 +852,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S05_L VLP -> Przy wejsciu lewa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_L"
-              pt: "VLP"
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S05_L LP -> Przy wejsciu lewa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_L"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S05_L SP -> Przy wejsciu lewa"
-          - script.execute:
-              id: sypialnia
-              sn: "S05_L"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S05_L", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Prawa Dol'
@@ -870,23 +863,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_PD LP -> prawa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_PD SP -> prawa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_PD", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Prawa Gora'
@@ -897,23 +874,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_PG LP -> prawa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_PG SP -> prawa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_PG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_PG", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Lewa Dol'
@@ -924,23 +885,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_LD LP -> prawa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_LD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_LD SP -> prawa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_LD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_LD", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po prawej - Lewa Gora'
@@ -951,23 +896,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S06_LG LP -> prawa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_LG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S06_LG SP -> prawa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S06_LG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S06_LG", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po lewej - Prawa Dol'
@@ -978,23 +907,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_PD LP -> lewa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_PD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_PD SP -> lewa prawa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_PD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_PD", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po lewej - Prawa Gora'
@@ -1005,23 +918,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_PG LP -> lewa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_PG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_PG SP -> lewa prawa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_PG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_PG", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy lozku po lewej - Lewa Dol'
@@ -1032,23 +929,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_LD LP -> lewa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LD"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_LD SP -> lewa lewa dol"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LD"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_LD", script: "sypialnia" } }
 
   - platform: gpio
     name: 'Sypialnia przy łużku po lewej - Lewa Gora'
@@ -1059,23 +940,8 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S07_LG LP -> lewa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LG"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S07_LG SP -> lewa lewa gora"
-          - script.execute:
-              id: sypialnia
-              sn: "S07_LG"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S07_LG", script: "sypialnia" } }
+
 ###### SYPIALNIA ##############
 ###### LAZIENKA  ##############
   - platform: gpio

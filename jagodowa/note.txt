@@ -153,15 +153,39 @@ S12_P                                                                           
   - Długie naciśniecie przycisku > 5s przy drzwiach wyjściowych gasi światła w całym domu
 
 - Sypialnia
+                         L04
     S07_LG   SO7_PG   | łóżko |   S06_LG  S06_PG
     S07_LD   S07_PD   |       |   S06_LD  S06_PD
+                O06   |       |   O07
                       |       |
-
+                      |  O08  |
+                      |       |
     S05_L    S05_P
+                         L03
 
     - S07 poczwórny przycisk po lewej  stronie łóżka (patrząc na łóżko)
     - S06 poczwórny przycisk po prawej stronie łóżka (patrząc na łóżko)
     - S05 podwójny przycisk przy wejściu do sypialni
+
+    - L03 Led blenda
+    - L04 Led za łóżkiem
+    - O08 Oświetlenie główne
+    - O07 Oświetlenie po prawej stronie łóżka
+    - O06 Oświetlenie po lewej stronie łóżka
+
+    Główne światło O08 przełączane po naciśnięciu (SP) S05_L, S07_PG, S06_LG                                         [D]
+    O06 przełączane po naciśnięciu (SP) S07_PD                                                                       [D]
+    O07 przełączane po naciśnięciu (SP) S06_LD                                                                       [D]
+
+    O06 zostanie wyłączone, jeżeli LP S06_LD                                                                         [D]
+    O07 zostanie wyłączone, jeżeli LP S07_LD                                                                         [D]
+
+    L03 przełączane po naciśnięciu (SP) S07_LG, S06_PG, S05_P       dl_01                                            [D]
+    L04 przełączane po naciśnięciu (SP) S07_LD, S06_PD              dl_01                                            [D]
+
+    L03 L04 zostaną wyłączone, jeżeli LP dla przycisków odpowiedzialnych za ledy SO5_P S07_LG S07_LD S06_PG S06_PD   [D]
+
+    VLP (>3s) niezależnie od przycisku gasi całą sypialnię                                                           [D]
 
 
 
