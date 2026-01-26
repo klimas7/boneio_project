@@ -97,6 +97,7 @@ packages:
     files: [ time.yaml, display.yaml ]
 
 logger:
+  level: INFO
 api:
   reboot_timeout: 0s
 ota:
@@ -261,12 +262,12 @@ script:
       - lambda: |-
           ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
           
-          if ((sn == "S12_L" && pt == "LP") || pt == "VLP") {
+          if (pt == "LP" || pt == "VLP") {
             id(O10).turn_off().perform();
           }
           
           if (sn == "S12_L" && pt == "SP") {
-            id(O10).turn_on().perform();
+            id(O10).toggle().perform();
           }
 ###### GABINET ########
 
@@ -391,27 +392,27 @@ script:
 
 light:
   - platform: binary
-    name: 'Salon/Wypoczynek A'
+    name: 'Salon-Wypoczynek A'
     output: out_01
     id: O01_A
   - platform: binary
-    name: 'Salon/Wypoczynek B'
+    name: 'Salon-Wypoczynek B'
     output: out_02
     id: O01_B
   - platform: binary
-    name: 'Salon/Jadalnia A'
+    name: 'Salon-Jadalnia A'
     output: out_03
     id: O02_A
   - platform: binary
-    name: 'Salon/Jadalnia B'
+    name: 'Salon-Jadalnia B'
     output: out_04
     id: O02_B
   - platform: binary
-    name: 'Salon/Kuchnia A'
+    name: 'Salon-Kuchnia A'
     output: out_05
     id: O03_A
   - platform: binary
-    name: 'Salon/Kuchnia B'
+    name: 'Salon-Kuchnia B'
     output: out_06
     id: O03_B
   - platform: binary
@@ -1037,7 +1038,7 @@ binary_sensor:
 ###### LAZIENKA  ##############
 ###### PRZEDPOKOJ  ##############
   - platform: gpio
-    name: 'Przedpokoj wejscie do sypialni/salonu'
+    name: 'Przedpokoj wejscie do sypialni-salonu'
     id: S10
     pin:
       pcf8574: pcf_inputs_15to28
@@ -1090,15 +1091,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S12_P VLP -> gabinet Prawa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_P"
-              pt: "VLP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S12_P", script: "gabinet" } }
 
   - platform: gpio
     name: 'Gabinet - Lewa'
@@ -1109,39 +1102,8 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S12_L VLP -> gabinet Lewa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_L"
-              pt: "VLP"
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S12_L LP -> gabinet Lewa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_L"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S12_L SP -> gabinet Lewa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_L"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S12_L", script: "gabinet" } }
 
-    on_press:
-      then:
-        - logger.log: "S12_L OP -> gabinet Lewa"
-        - script.execute:
-            id: gabinet
-            sn: "S12_L"
-            pt: "OP"
 ###################################### GABINET ######################################
 
   - platform: gpio

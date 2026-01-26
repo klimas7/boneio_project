@@ -68,6 +68,7 @@ pcf8574:
     address: 0x38
 
 logger:
+  level: INFO
 api:
   reboot_timeout: 0s
 ota:
@@ -101,7 +102,7 @@ text_sensor:
     id: hostname
     entity_category: diagnostic
     lambda: |-
-      return id(eth).get_use_address();
+      return std::string(id(eth).get_use_address());
     update_interval: 5min
   - platform: template
     name: "Led state"
@@ -189,31 +190,15 @@ script:
       - lambda: |-
           ESP_LOGI("gabinet", "%s %s", sn.c_str(), pt.c_str());
           
-          // L11 -> led polka
+          // L11 -> led polka - Narazie nie obslugiwana
           // L12 -> led Blenda
           
-          if ((sn == "S12_P" && pt == "LP") || pt == "VLP") {
-            id(L11).turn_off().perform();
+          if (pt == "LP" || pt == "VLP") {
             id(L12).turn_off().perform();
           }
           
           if (sn == "S12_P" && pt == "SP") {
-            auto isOnL11 = id(L11).current_values.is_on();
-            auto isOnL12 = id(L12).current_values.is_on();
-            if ((!isOnL11 && !isOnL12) || (isOnL11 && isOnL12)) {
-              id(L12).turn_on().perform();
-              id(L11).turn_off().perform();
-            }
-          
-            if (isOnL12 && !isOnL11) {
-              id(L12).turn_off().perform();
-              id(L11).turn_on().perform();
-            }
-          
-            if (!isOnL12 && isOnL11) {
-              id(L12).turn_on().perform();
-              id(L11).turn_on().perform();
-            }
+            id(L12).toggle().perform();
           }
 ###### GABINET #####
 ###### SYPIALNIA #####
@@ -350,46 +335,16 @@ binary_sensor:
     id: remote_S12_P
     remote_id: S12_P
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S12_P VLP -> gabinet Prawa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_P"
-              pt: "VLP"
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S12_P LP -> gabinet Prawa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_P"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S12_P SP -> gabinet Prawa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_P"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S12_P", script: "gabinet" } }
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S12_L
     remote_id: S12_L
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 3s
-        then:
-          - logger.log: "S12_L VLP -> gabinet Lewa"
-          - script.execute:
-              id: gabinet
-              sn: "S12_L"
-              pt: "VLP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S12_L", script: "gabinet" } }
+
 ######### GABINET    #######################################
 ######### SYPIALNIA  #######################################
   # S05_L S05_P

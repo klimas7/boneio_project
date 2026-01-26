@@ -12,7 +12,7 @@
       - logger.log: "${switch_name} LP"
       - script.execute:
           id: ${script}
-          sn: "${switch_name}"S
+          sn: "${switch_name}"
           pt: "LP"
   - timing:
       - ON for at most 1s

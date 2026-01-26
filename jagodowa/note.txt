@@ -187,7 +187,12 @@ S12_P                                                                           
 
     VLP (>3s) niezależnie od przycisku gasi całą sypialnię                                                           [D]
 
+[26.01.2026]
+    "I czy jest szansa aby światło w małym pokoju się wyłączało jednym kliknięciem"
+    w mały pokoju są dwa przyciski S12 i zrobimy tak, naciśnięcie włącza/wyłącza lampe S12_L lub led S12_P           [D]
+    a jak przytrzymasz obojętnie który to wyłączysz oba                                                              [D]
 
+    Ta na razie, dopóki nie ma tego leda, dedykowanego do półki to będzie ok                                         [D]
 
 
 
