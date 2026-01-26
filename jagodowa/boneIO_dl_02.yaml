@@ -188,7 +188,7 @@ script:
             id(L06).toggle().perform();  
           }
           
-          if ((sn == "S08_P" || sn == "S08_L") && pt == "LP") {  
+          if (sn == "S08_P" && pt == "LP") {  
             id(L06).turn_off().perform();
           }
 ##### LAZIENKA #########################
@@ -286,69 +286,24 @@ binary_sensor:
     id: remote_S09_G
     remote_id: S09_G  # Wejscie do lazienki - Gora
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S09_G LP -> Wejscie gora"
-          - script.execute:
-              id: lazienka
-              sn: "S09_G"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S09_G SP -> Wejscie gora"
-          - script.execute:
-              id: lazienka
-              sn: "S09_G"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S09_G", script: "lazienka" } }
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S08_P
     remote_id: S08_P # Lazienka przy lustrze - prawa
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S08_P LP -> lustro prawa"
-          - script.execute:
-              id: lazienka
-              sn: "S08_P"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S08_P SP -> lustro prawa"
-          - script.execute:
-              id: lazienka
-              sn: "S08_P"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S08_P", script: "lazienka" } }
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S08_L
     remote_id: S08_L  # Lazienka przy lustrze - Lewa
     type: data
-    on_multi_click:
-      - timing:
-          - ON for at least 1s
-        then:
-          - logger.log: "S08_L LP -> lustro lewa"
-          - script.execute:
-              id: lazienka
-              sn: "S08_L"
-              pt: "LP"
-      - timing:
-          - ON for at most 1s
-        then:
-          - logger.log: "S08_L SP -> lustro lewa"
-          - script.execute:
-              id: lazienka
-              sn: "S08_L"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S08_L", script: "lazienka" } }
+
 ###### LAZIENKA #######################
 ###### PRZEDPOKOJ #####################
   - platform: packet_transport
@@ -382,7 +337,7 @@ light:
     gamma_correct: 0
   - platform: monochromatic
     output: chl03
-    name: 'L07 - Lazienka szafka/lustro'
+    name: 'L07 - Lazienka szafka-lustro'
     id: L07
     default_transition_length: 2s
     gamma_correct: 0

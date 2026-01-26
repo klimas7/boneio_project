@@ -193,7 +193,20 @@ S12_P                                                                           
     a jak przytrzymasz obojętnie który to wyłączysz oba                                                              [D]
 
     Ta na razie, dopóki nie ma tego leda, dedykowanego do półki to będzie ok                                         [D]
+    ----------
+    "Moglibyśmy z tym wentylatorem pomyśleć,
+     że jak przytrzymam przycisk przy umywalce dłużej to wyłączę wentylator albo włączę"
 
+     A jeszcze odnośnie wentylatora.
+     To te przyciski działają tak.
+     - naciśnięcie prawego włącza/wyłącza główne światło.
+     - naciśnięcie lewego włącza/wyłącza led prysznic.
+     - jeśli naciśniesz długo który kolwiek to wyłączasz i główne i leda prysznic
+     Korzystacie z tego długiego naciśnięcia? Czy mogę się podpiąć pod np lewy
 
+     i jak naciśniesz długo lewy >1s to wyłanczasz/włanczasz wentylator
+
+    Więc może być lewy długi wentylator                                                                              [D]
+    Prawy długi światło główne i prysznic off                                                                        [D]
 
 
