@@ -98,6 +98,7 @@ packages:
     url: https://github.com/klimas7/esphome
     ref: v1.8.10
     files: [ time.yaml, display.yaml ]
+  shelly: !include shelly.yaml
 
 
 logger:
@@ -213,7 +214,24 @@ script:
       pt: string #push type
     then:
       - lambda: |-
-          ESP_LOGI("test", "%s %s", sn.c_str(), pt.c_str());
+          ESP_LOGI("test_01", "%s %s", sn.c_str(), pt.c_str());
+      - lambda: |-
+          
+          id(shelly_check_state)->execute(SHELLY_KUCHNIA);
+          
+          ESP_LOGI("test_02", "%s %s", sn.c_str(), pt.c_str());
+          
+          if (sn == "TS1_A" && pt == "SP") {
+            id(shelly_on_off)->execute(SHELLY_KUCHNIA, true);
+          }
+          if (sn == "TS1_A" && pt == "LP") {
+            id(shelly_on_off)->execute(SHELLY_KUCHNIA, false);
+          }
+          
+          auto shelly_state_0 = id(shelly_state)[SHELLY_KUCHNIA];
+          auto shelly_state_1 = id(shelly_state)[SHELLY_WYSPA];
+          ESP_LOGI("shelly", "%d %d", shelly_state_0, shelly_state_1);
+          
           
           // O01_A -> O1
           // O01_B -> O2
@@ -310,7 +328,7 @@ script:
               }
             }
           }
-          ###### ZEWNATRZ ######          
+###### ZEWNATRZ ######
 
 
 light:
@@ -446,16 +464,14 @@ light:
 binary_sensor:
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Prawa'
-    id: S01_P #IN_01
+    id: TS1_A #IN_01
     pin:
       pcf8574: pcf_inputs_1to14
       number: 0
       mode:
         input: true
       inverted: true
-    on_press:
-      then:
-        - logger.log: "S01_P OP -> Okno tarasowym - Prawa"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "TS1_A", script: "test" } }
 
   - platform: gpio
     name: 'Salon przy oknie tarasowym - Lewa'
