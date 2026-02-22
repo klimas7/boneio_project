@@ -1,0 +1,18 @@
+esphome:
+  platformio_options:
+    build_flags:
+      - -DSHELLY_KUCHNIA=0
+      - -DSHELLY_WYSPA=1
+
+globals:
+  - id: shelly_ips
+    type: std::array<std::string, 2>
+    restore_value: no
+    initial_value: '{"10.10.1.120","10.10.1.63"}'
+  - id: shelly_state
+    type: std::array<bool, 2>
+    restore_value: no
+    initial_value: '{false,false}'
+
+packages:
+  shelly_common: !include shelly_common.yaml
