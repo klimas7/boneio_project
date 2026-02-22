@@ -1,0 +1,52 @@
+http_request:
+  timeout: 80ms
+
+script:
+  - id: shelly_on_off
+    mode: parallel
+    parameters:
+      index: int
+      onOff: bool
+    then:
+      - lambda: |-
+          auto ip = id(shelly_ips)[index];
+          ESP_LOGI("shelly_on_off", "%s %d", ip.c_str(), onOff);
+      - http_request.get:
+          url: !lambda |-
+            auto ip = id(shelly_ips)[index];
+            std::string url = "http://" + ip + "/rpc/Switch.Set?id=0&on=";
+            url += (onOff ? "true" : "false");
+            ESP_LOGI("shelly_url", "%s", url.c_str());
+            return url;
+          on_response:
+            then:
+              - lambda: |-
+                  if (response->status_code == 200) {
+                    id(shelly_state)[index] = onOff;
+                  }
+
+  - id: shelly_check_state
+    mode: parallel
+    parameters:
+      index: int
+    then:
+      - lambda: |-
+          auto ip = id(shelly_ips)[index]; 
+          ESP_LOGI("shelly_check_state", "%s", ip.c_str());
+      - http_request.get:
+          url: !lambda |-
+            auto ip = id(shelly_ips)[index];
+            std::string url = "http://" + ip + "/rpc/Switch.GetStatus?id=0";
+            return url;
+          capture_response: true
+          on_response:
+            then:
+              - lambda: |-
+                  if (response->status_code == 200) {
+                    bool out = false;
+                    json::parse_json(body, [&](JsonObject root) -> bool {
+                      out = root["output"];
+                      return true;
+                    });
+                    id(shelly_state)[index] = out;
+                  }
