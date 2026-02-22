@@ -1,0 +1,24 @@
+  - timing:
+      - ON for at least 3s
+    then:
+      - logger.log: "${switch_name} VLP"
+      - script.execute:
+          id: ${script}
+          sn: "${switch_name}"
+          pt: "VLP"
+  - timing:
+      - ON for at least 1s
+    then:
+      - logger.log: "${switch_name} LP"
+      - script.execute:
+          id: ${script}
+          sn: "${switch_name}"
+          pt: "LP"
+  - timing:
+      - ON for at most 1s
+    then:
+      - logger.log: "${switch_name} SP"
+      - script.execute:
+          id: ${script}
+          sn: "${switch_name}"
+          pt: "SP"
