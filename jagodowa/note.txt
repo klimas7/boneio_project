@@ -1,6 +1,8 @@
 D8-13-2A-39-D1-04   192.168.0.104   boneio-32-l-07-39d104     //boneIO_32_10.yaml
 D8-13-2A-7D-86-E0   192.168.0.103   boneio-dr-8ch-03-7d86e0   //boneIO_dl_01.yaml // Gabinet / Sypialnia / Komunikacja
 D8-13-2A-7C-85-00   192.168.0.100   boneio-dr-8ch-03-7c8500   //boneIO_dl_02.yaml // Salon Lazienka
+                    192.168.0.X     Shelly-Kuchnia
+                    192.168.0.X     Shelly-Wyspa
 
 Słownik
 - SP  short press (poniżej 1s)
@@ -208,5 +210,17 @@ S12_P                                                                           
 
     Więc może być lewy długi wentylator                                                                              [D]
     Prawy długi światło główne i prysznic off                                                                        [D]
+
+
+[23.02.2026]
+    Dodanie integracji z shelly                                                                                      [D]
+    Wyłączenie shelly przy wyłączenieu wszytkich świateł                                                             [D]
+    Wyłączenie shelly przy wyłączeniu ledów                                                                          [D]
+
+    SP - Led TV (TV + witryna) ON,  led blenda ON   --- (Tak jest teraz)                                             [D]
+    SP - Led kuchnia ON  (jeśli było off)           --- (Nowy krok)                                                  [D]
+    SP - Led TV (TV + witryna) OFF, Led Blenda ON (Tak jest teraz)                                                   [D]
+    SP - Led TV (TV + witryna) ON, Led Blenda OFF (Tak jest teraz)                                                   [D]
+
 
 

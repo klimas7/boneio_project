@@ -32,6 +32,7 @@ packages:
         'devices/dimmer_ina219.yaml',
         'boards/dimmer_output.yaml',
       ]
+  shelly: !include shelly.yaml
 
 ethernet:
   id: eth
@@ -114,15 +115,25 @@ script:
       - lambda: |-
           ESP_LOGI("salon", "%s %s", sn.c_str(), pt.c_str());
           
-          // - SP -> L01:1;L2:1 -> SP -> L01:1;L02:0 -> SP -> L01:0; L02:1 -> SP ->
+          // L01A, L01B -> L01 --> Blenda
+          // L02B       -> L02 --> Led TV
+          // SH01       -> S01 --> Shelly kuchnia
+          
+          // - SP -> L01:1;L02:1 -> IF (S01 is 1) -> SP -> L01:1;L02:0 -> SP -> L01:0; L02:1 -> SP ->
+          //                     -> ELSE S01:1    -> SP
           //     |                    |                     |
-          //     |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0
+          //     |->LP ->-------------|->LP ->--------------|->LP -> L01:0;L02:0;S01:0
           //
           
           if (((sn == "S02B_P" || sn == "S03B_P") && pt == "LP") || pt == "VLP") {
             id(L01A).turn_off().perform();
             id(L01B).turn_off().perform();
             id(L02).turn_off().perform();
+            
+            ESP_LOGI("salon", "shelly off");
+            id(shelly_on_off)->execute(SHELLY_KUCHNIA, false);
+            id(shelly_on_off)->execute(SHELLY_WYSPA, false);
+          
             return;
           }
           
@@ -135,18 +146,28 @@ script:
               id(L01A).turn_on().perform();
               id(L01B).turn_on().perform();
               id(L02).turn_on().perform();
+              return;
+            }
+            
+            id(shelly_check_state)->execute(SHELLY_KUCHNIA);
+            auto isOnS01 = id(shelly_state)[SHELLY_KUCHNIA];
+            if (!isOnS01) {
+              id(shelly_on_off)->execute(SHELLY_KUCHNIA, true);
+              return;
             }
 
             if (isOnL01 && isOnL02) {
               id(L01A).turn_on().perform();
               id(L01B).turn_on().perform();
               id(L02).turn_off().perform();
+              return;
             }
 
             if (isOnL01 && !isOnL02) {
               id(L01A).turn_off().perform();
               id(L01B).turn_off().perform();
               id(L02).turn_on().perform();
+              return;
             }
           }
 ##### SALON ###########################
@@ -219,62 +240,15 @@ binary_sensor:
     id: remote_S02B_P
     remote_id: S02B_P
     type: data
-    on_multi_click:
-      - timing: #Very long push
-          - ON for at least 3s
-        then:
-          - logger.log: "S02B_P VLP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S02B_P"
-              pt: "VLP"
-      - timing: #Long push
-          - ON for at least 1s
-        then:
-          - logger.log: "S02B_P LP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S02B_P"
-              pt: "LP"
-      - timing: #Short push
-          - ON for at most 1s   # Press less then 1 sek.
-        then:
-          - logger.log: "S02B_P SP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S02B_P"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S02B_P", script: "salon" } }
+
   - platform: packet_transport
     transport_id: transport
     provider: boneio-32-l-07-39d104
     id: remote_S03B_P
     remote_id: S03B_P
     type: data
-    on_multi_click:
-      - timing: #Very long push
-          - ON for at least 3s
-        then:
-          - logger.log: "S02B_P VLP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S03B_P"
-              pt: "VLP"
-      - timing: #Long push
-          - ON for at least 1s #Press more then 1s
-        then:
-          - logger.log: "S03B_P LP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S03B_P"
-              pt: "LP"
-      - timing: #Short push
-          - ON for at most 1s   # Press less then 1 sek.
-        then:
-          - logger.log: "S03B_P SP -> salon/wyspa"
-          - script.execute:
-              id: salon
-              sn: "S03B_P"
-              pt: "SP"
+    on_multi_click: !include { file: on-multi-click.yaml, vars: { switch_name: "S03B_P", script: "salon" } }
 ###### SALON ##########################
 ###### LAZIENKA #######################
   - platform: template

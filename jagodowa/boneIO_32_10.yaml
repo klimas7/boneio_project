@@ -100,6 +100,7 @@ packages:
     url: https://github.com/klimas7/esphome
     ref: v1.8.10
     files: [ time.yaml, display.yaml ]
+  shelly: !include shelly.yaml
 
 logger:
   level: INFO
@@ -392,6 +393,10 @@ script:
             auto call = l->turn_off();
             call.perform();
           }
+          
+          ESP_LOGI("master_off", "shelly off");
+          id(shelly_on_off)->execute(SHELLY_KUCHNIA, false);
+          id(shelly_on_off)->execute(SHELLY_WYSPA, false);
           
           ESP_LOGI("master_off", "end");
 ##### ALL ############
