@@ -1,6 +1,6 @@
-D8-13-2A-39-D1-04   192.168.18.33   boneio-32-l-07-39d104     //boneIO_32_10.yaml
-D8-13-2A-7D-86-E0   192.168.18.32   boneio-dr-8ch-03-7d86e0   //boneIO_dl_01.yaml // Gabinet / Sypialnia / Komunikacja
-D8-13-2A-7C-85-00   192.168.18.60   boneio-dr-8ch-03-7c8500   //boneIO_dl_02.yaml // Salon Lazienka
+D8-13-2A-39-D1-04   192.168.0.104   boneio-32-l-07-39d104     //boneIO_32_10.yaml
+D8-13-2A-7D-86-E0   192.168.0.103   boneio-dr-8ch-03-7d86e0   //boneIO_dl_01.yaml // Gabinet / Sypialnia / Komunikacja
+D8-13-2A-7C-85-00   192.168.0.100   boneio-dr-8ch-03-7c8500   //boneIO_dl_02.yaml // Salon Lazienka
 
 Słownik
 - SP  short press (poniżej 1s)

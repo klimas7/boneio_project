@@ -39,8 +39,13 @@ packet_transport:
       - S02B_P #L01 & L02 Salon dl_02
       - S03B_P #L01 & L02 Salon dl_02
       - S05_P  #L03 & L04 Sypialnia dl_01
+      - S05_L  #L03 & L04 Sypialnia dl_01
       - S06_PG #L03 & L04 Sypialnia dl_01
       - S06_PD #L03 & L04 Sypialnia dl_01
+      - S06_LG #L03 & L04 Sypialnia dl_01
+      - S06_LD #L03 & L04 Sypialnia dl_01
+      - S07_PG #L03 & L04 Sypialnia dl_01
+      - S07_PD #L03 & L04 Sypialnia dl_01
       - S07_LG #L03 & L04 Sypialnia dl_01
       - S07_LD #L03 & L04 Sypialnia dl_01
       - S08_P  #Lazienka  dl_02

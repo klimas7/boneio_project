@@ -221,8 +221,19 @@ script:
             id(L04).turn_off().perform();
           }
           
+          if (sn == "S05_P" && pt == "SP") {
+            auto isLedOn = id(L03).current_values.is_on() && id(L04).current_values.is_on();
+            if (isLedOn) {
+              id(L03).turn_off().perform();
+              id(L04).turn_off().perform();
+            } else {
+              id(L03).turn_on().perform();
+              id(L04).turn_on().perform();
+            }
+          }
+          
           //L03
-          if ((sn == "S05_P" || sn == "S07_LG" || sn == "S06_PG") && pt == "SP") {
+          if ((sn == "S07_LG" || sn == "S06_PG") && pt == "SP") {
             id(L03).toggle().perform();
           }
           
