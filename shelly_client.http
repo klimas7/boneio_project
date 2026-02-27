@@ -2,10 +2,10 @@
 # http://${SHELLY}/rpc/Switch.Set?id=0&on=true
 
 ### on
-GET http://10.10.1.120/rpc/Switch.Set?id=0&on=true
+GET http://192.168.0.165/rpc/Switch.Set?id=0&on=true
 
 ### off
-GET http://10.10.1.120/rpc/Switch.Set?id=0&on=false
+GET http://192.168.0.165/rpc/Switch.Set?id=0&on=false
 
 ### Get state
 GET http://10.10.1.120/rpc/Switch.GetStatus?id=0

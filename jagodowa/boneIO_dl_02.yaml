@@ -288,7 +288,7 @@ binary_sensor:
     type: data
     on_multi_click:
       - timing:
-          - ON for at least 5s
+          - ON for at least 3s
         then:
           - logger.log: "S11_L VLP -> przedpokoj wejscie lewa"
           - script.execute:

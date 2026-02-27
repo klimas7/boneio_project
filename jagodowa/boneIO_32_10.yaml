@@ -98,7 +98,7 @@ packages:
     ]
   internals_packages_klimas7:
     url: https://github.com/klimas7/esphome
-    ref: v1.8.10
+    ref: 1.8.10
     files: [ time.yaml, display.yaml ]
   shelly: !include shelly.yaml
 
@@ -1040,7 +1040,7 @@ binary_sensor:
       inverted: true
     on_multi_click:
       - timing:
-          - ON for at least 5s
+          - ON for at least 3s
         then:
           - logger.log: "S11_L VLP -> przedpokoj wejscie lewa"
           - script.execute:
