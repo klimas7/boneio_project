@@ -96,7 +96,7 @@ packages:
     ]
   internals_packages_klimas7:
     url: https://github.com/klimas7/esphome
-    ref: v1.8.10
+    ref: 1.8.10
     files: [ time.yaml, display.yaml ]
   shelly: !include shelly.yaml
 
