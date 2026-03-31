@@ -174,18 +174,20 @@ Projekt wykorzystuje modułową strukturę plików YAML, charakterystyczną dla 
 
 ### Struktura Modułowa (YAML)
 Zamiast jednego dużego pliku konfiguracyjnego, projekt dzieli się na mniejsze, logiczne części:
-*   **Pakiety (`packages`):** Wykorzystywane do importowania gotowych definicji sprzętowych (np. mapowanie pinów dla konkretnej płytki BoneIO) bezpośrednio z zewnętrznych repozytoriów GitHub (`boneIO-eu/esphome`). Dzięki temu główny plik `boneIO_*.yaml` zawiera tylko logikę biznesową, a nie definicje niskopoziomowe.
-*   **Szablony Lokalne:** Pliki takie jak `on-multi-click.yaml` działają jak funkcje w programowaniu. Pozwalają na zdefiniowanie logiki obsługi przycisku (rozróżnianie krótkiego, długiego i bardzo długiego wciśnięcia) w jednym miejscu i wielokrotne jej użycie dla każdego wejścia. Zapewnia to spójne zachowanie wszystkich przycisków w domu.
+
+* **Pakiety (`packages`):** Wykorzystywane do importowania gotowych definicji sprzętowych (np. mapowanie pinów dla konkretnej płytki BoneIO) bezpośrednio z zewnętrznych repozytoriów GitHub (`boneIO-eu/esphome`). Dzięki temu główny plik `boneIO_*.yaml` zawiera tylko logikę biznesową, a nie definicje niskopoziomowe.
+* **Szablony Lokalne:** Pliki takie jak `on-multi-click.yaml` działają jak funkcje w programowaniu. Pozwalają na zdefiniowanie logiki obsługi przycisku (rozróżnianie krótkiego, długiego i bardzo długiego wciśnięcia) w jednym miejscu i wielokrotne jej użycie dla każdego wejścia. Zapewnia to spójne zachowanie wszystkich przycisków w domu.
 
 ### Logika Biznesowa (Scripting)
 Logika sterowania oświetleniem nie jest "zaszyta" w definicjach przycisków, lecz wydzielona do sekcji `script`.
-*   **Centralizacja:** Każde pomieszczenie (np. `id: salon`, `id: sypialnia`) posiada własny skrypt sterujący.
-*   **Parametryzacja:** Skrypty przyjmują parametry: nazwę przełącznika (`sn`) oraz typ wciśnięcia (`pt`).
-*   **Język C++ (Lambdas):** Wewnątrz skryptów wykorzystywane są bloki `lambda`, pozwalające na użycie pełnej mocy języka C++ do obsługi skomplikowanych warunków (np. sprawdzanie stanów wielu lamp naraz, tablice stanów, pętle), co byłoby niemożliwe w czystym YAML.
+
+* **Centralizacja:** Każde pomieszczenie (np. `id: salon`, `id: sypialnia`) posiada własny skrypt sterujący.
+* **Parametryzacja:** Skrypty przyjmują parametry: nazwę przełącznika (`sn`) oraz typ wciśnięcia (`pt`).
+* **Język C++ (Lambdas):** Wewnątrz skryptów wykorzystywane są bloki `lambda`, pozwalające na użycie pełnej mocy języka C++ do obsługi skomplikowanych warunków (np. sprawdzanie stanów wielu lamp naraz, tablice stanów, pętle), co byłoby niemożliwe w czystym YAML.
 
 ### Komunikacja Między Urządzeniami
-*   **Wewnętrzna (BoneIO):** Urządzenia wymieniają się informacjami (np. naciśnięcie przycisku na Głównym Sterowniku -> włączenie LED na Ściemniaczu) przy użyciu komponentu `packet_transport` opartego na protokole **UDP**. Zapewnia to minimalne opóźnienia, kluczowe dla komfortu użytkowania (brak zauważalnego "laga" po wciśnięciu przycisku).
-*   **Zewnętrzna (Shelly):** Integracja z urządzeniami Shelly odbywa się poprzez standardowe żądania HTTP (REST API). BoneIO wysyła zapytania `http_request` do urządzeń Shelly, aby zmienić ich stan lub odczytać status. Logika ta jest wydzielona w plikach `shelly.yaml` oraz `shelly_common.yaml`.
+* **Wewnętrzna (BoneIO):** Urządzenia wymieniają się informacjami (np. naciśnięcie przycisku na Głównym Sterowniku -> włączenie LED na Ściemniaczu) przy użyciu komponentu `packet_transport` opartego na protokole **UDP**. Zapewnia to minimalne opóźnienia, kluczowe dla komfortu użytkowania (brak zauważalnego "laga" po wciśnięciu przycisku).
+* **Zewnętrzna (Shelly):** Integracja z urządzeniami Shelly odbywa się poprzez standardowe żądania HTTP (REST API). BoneIO wysyła zapytania `http_request` do urządzeń Shelly, aby zmienić ich stan lub odczytać status. Logika ta jest wydzielona w plikach `shelly.yaml` oraz `shelly_common.yaml`.
 
 ---
 
